@@ -1,0 +1,32 @@
+# dependencies
+node_modules/
+vendor/
+composer.lock
+
+# build outputs
+public/build/
+
+# Coverage reports
+coverage/
+
+# uploaded files
+uploads/
+files/
+
+# environment variables
+.env*
+!.env.example
+
+# phpunit
+phpunit.xml
+phpunit.xml.dist
+
+# logs
+logs/
+*.log
+
+# misc
+.cache/
+.DS_Store
+Thumbs.db
+*.cache

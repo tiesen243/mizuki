@@ -25,7 +25,7 @@ class Post
 
     public function __construct()
     {
-        $this->id = \Core\Utils::createId();
+        $this->id = createId();
         $this->createdAt = date('Y-m-d H:i:s');
         $this->updatedAt = date('Y-m-d H:i:s');
     }

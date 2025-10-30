@@ -1,8 +1,13 @@
 <main class="container py-4">
-  <article class="card p-4">
-    <h1><?php echo htmlspecialchars($post->title, ENT_QUOTES, 'UTF-8'); ?></h1>
-    <small><?php echo htmlspecialchars($post->createdAt, ENT_QUOTES, 'UTF-8'); ?></small>
+  <a href="/?controller=post&action=index" class="inline-flex items-center justify-center h-9 px-3 rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground mb-6">
+    &larr; Back to Posts
+  </a>
+
+  <article class="max-w-prose mx-auto flex flex-col gap-4">
+    <h1 class="text-2xl font-bold"><?php echo htmlspecialchars($post->title, ENT_QUOTES, 'UTF-8'); ?></h1>
+    <small class="text-sm text-muted-foreground"><?php echo htmlspecialchars($post->createdAt, ENT_QUOTES, 'UTF-8'); ?></small>
+    <hr class="my-4">
+
     <p><?php echo nl2br(htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8')); ?></p>
-    <a href="/?controller=post&action=index" class="btn btn-secondary">Back to Posts</a>
   </article>
 </main>
