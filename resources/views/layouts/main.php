@@ -6,8 +6,20 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
     <!-- SEO -->
-    <title><?php echo $title ? "$title | ".getConfig()['app']['name'] : getConfig()['app']['name']; ?></title>
-    <meta name="description" content="<?php echo $description ? $description : getConfig()['app']['description']; ?>">
+    <title><?php
+      if (isset($title) && $title) {
+          echo $title . ' | ' . getConfig()['app']['name'];
+      } else {
+          echo getConfig()['app']['name'];
+      }
+    ?></title>
+    <meta name="description" content="<?php
+      if (isset($meta_description) && $meta_description) {
+          echo $meta_description;
+      } else {
+          echo getConfig()['app']['description'];
+      }
+    ?>">
 
     <!-- fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
