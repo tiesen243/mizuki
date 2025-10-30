@@ -3,9 +3,10 @@
 return [
   "app" => [
     "name" => getenv("APP_NAME") ?: "Mizuki",
-    "env" => getenv("APP_ENV") ?: "production",
-    "debug" => filter_var(getenv("APP_DEBUG") ?: false, FILTER_VALIDATE_BOOLEAN),
+    "description" => getenv("APP_DESCRIPTION") ?: "Mizuki is a lightweight, open-source blogging platform designed for simplicity and ease of use.",
+    "env" => getenv("APP_ENV") ?: "development",
     "url" => getenv("APP_URL") ?: "http://localhost:8000",
+    "viteUrl" => "http://[::1]:5173",
   ],
 
   'database' => [

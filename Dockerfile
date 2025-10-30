@@ -11,13 +11,24 @@ WORKDIR /deps
 COPY composer.json ./
 RUN composer install --no-dev --optimize-autoloader
 
+FROM oven/bun:latest AS builder
+WORKDIR /build
+
+COPY package.json bun.lock ./
+RUN bun ci
+
+COPY resources ./resources
+COPY vite.config.ts ./vite.config.ts
+RUN bun run build
+
 FROM base AS runner
 WORKDIR /app
 
 COPY --from=dependencies /deps/vendor ./vendor
+COPY --from=builder /build/public/build ./public/build
 COPY app ./app
 COPY public ./public
+COPY resources/views ./resources/views
 COPY src ./src
-COPY views ./views
 
 CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]

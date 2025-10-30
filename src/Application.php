@@ -23,7 +23,7 @@ class Application
     public function run(): void
     {
         $this->loadEnv();
-        $this->config = $this->loadConfig();
+        $this->config = getConfig();
 
         Database::connect(
             $this->config['database']['host'],
@@ -99,14 +99,5 @@ class Application
                 putenv("{$key}={$value}");
             }
         }
-    }
-
-    private function loadConfig(): array
-    {
-        $configPath = $this->basePath.'/app/config.php';
-        if (!file_exists($configPath)) {
-            throw new \Exception("Configuration file not found at {$configPath}");
-        }
-        return require $configPath;
     }
 }

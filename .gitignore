@@ -3,6 +3,9 @@ node_modules/
 vendor/
 composer.lock
 
+# build outputs
+public/build/
+
 # Coverage reports
 coverage/
 

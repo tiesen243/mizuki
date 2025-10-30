@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Geist", sans-serif;
+  --font-mono: "Geist Mono", monospace;
+}
+
+@layer base {
+}
+
+@utility container {
+  padding-inline: 1rem;
+  margin-inline: auto;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
+  }
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}

@@ -13,13 +13,14 @@ abstract class Controller
 
     protected function render(string $view, array $data = [], string $layout = 'main'): Response
     {
+
         ob_start();
         extract($data);
-        require $this->basePath . '/views/' . $view . '.php';
+        require $this->basePath.'/resources/views/'.$view .'.php';
         $content = ob_get_clean();
 
         ob_start();
-        require $this->basePath . '/views/layouts/' . $layout . '.php';
+        require $this->basePath.'/resources/views/layouts/'.$layout.'.php';
         $content = ob_get_clean();
 
         return new Response($content);

@@ -5,6 +5,7 @@ services:
     restart: unless-stopped
     env_file: .env
     environment:
+      APP_ENV: "production"
       MYSQL_HOST: "db"
     ports:
       - "8000:8000"
