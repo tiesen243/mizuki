@@ -29,4 +29,10 @@ class Request
     {
         return $this->post[$key] ?? $default;
     }
+
+    public function getArgv(int $index, $default = null)
+    {
+        $argv = $this->server['argv'] ?? [];
+        return $argv[$index] ?? $default;
+    }
 }

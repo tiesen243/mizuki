@@ -1,47 +1,38 @@
 <?php
 
-namespace Core;
+namespace Core\Kernel;
 
-use Core\Container;
 use Core\Http\Request;
 use Core\Http\Response;
 
 class Application
 {
-    protected Container $container;
-    protected Request $request;
     private string $basePath;
     private array $config;
+
+    protected Container $container;
+    protected Request $request;
 
     public function __construct(string $basePath)
     {
         $this->basePath = rtrim($basePath, '/');
-        $this->container = new Container();
-        $this->request = new Request($_GET, $_POST, $_SERVER);
 
         $this->loadEnv();
         $this->config = getConfig();
-
-        Database::connect(
-            $this->config['database']['host'],
-            $this->config['database']['name'],
-            $this->config['database']['user'],
-            $this->config['database']['password']
-        );
+        Database::connect($this->config['database']);
     }
 
-    public function register(array $providers): self
+    public function register(callable $callback): self
     {
-        foreach ($providers as $providerClass) {
-            if (class_exists($providerClass) && is_subclass_of($providerClass, 'Core\Abtract\Provider')) {
-                $providerClass::register($this->container);
-            }
-        }
+        $this->container = new Container();
+        call_user_func($callback, $this->container);
         return $this;
     }
 
     public function run(): void
     {
+        $this->request = new Request($_GET, $_POST, $_SERVER);
+
         $controllerParam = $this->request->getQuery('controller', 'home');
         $actionParam = $this->request->getQuery('action', 'index');
 
@@ -76,7 +67,13 @@ class Application
 
     public function cli(callable $callback): void
     {
-        call_user_func($callback, Database::getInstance());
+        $this->request = new Request([], [], $_SERVER);
+
+        try {
+            call_user_func($callback, $this->request, Database::getInstance());
+        } catch (\Throwable $e) {
+            echo 'Error: ' . $e->getMessage() . PHP_EOL;
+        }
     }
 
     private function loadEnv(string $envPath = '.env'): void

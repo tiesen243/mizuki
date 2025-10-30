@@ -12,7 +12,6 @@ class PostRepository extends BaseRepository implements IPostRepository
 {
     public function __construct()
     {
-        $this->entity = new Post();
-        parent::__construct();
+        parent::__construct(new Post());
     }
 }

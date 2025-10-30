@@ -1,0 +1,2 @@
+ALTER TABLE `posts`
+ADD COLUMN `is_published` TINYINT(1) NOT NULL DEFAULT 0 AFTER `content`;

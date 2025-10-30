@@ -4,8 +4,8 @@ namespace App\Controller;
 
 use App\Contract\Repository\IPostRepository;
 use App\Entity\Post;
-use Core\Abtract\Controller;
 use Core\Http\Response;
+use Core\Kernel\Controller;
 
 class PostController extends Controller
 {

@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Contract\Repository\IBaseRepository;
-use Core\Database;
+use Core\Kernel\Database;
 
 /**
  * @template TEntity of object
@@ -19,8 +19,9 @@ abstract class BaseRepository implements IBaseRepository
     private ?string $primaryKey = null;
     private ?array $columns = null;
 
-    public function __construct()
+    public function __construct(object $entity)
     {
+        $this->entity = $entity;
         $this->db = Database::getInstance();
         $this->initializeMetadata();
     }

@@ -7,7 +7,8 @@ class Field
 {
     public function __construct(
         public string $name,
-        public string $type = 'VARCHAR(255)',
+        public string $type,
+        public bool $nullable,
         public bool $primary = false
     ) {
     }

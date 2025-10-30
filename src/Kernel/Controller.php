@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Abtract;
+namespace Core\Kernel;
 
 use Core\Http\Request;
 use Core\Http\Response;
