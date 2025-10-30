@@ -8,6 +8,15 @@ $application->cli(function (\Core\Http\Request $request, \PDO $db) {
     $command = $request->getArgv(1);
 
     switch ($command) {
+        case 'new':
+            $name = $request->getArgv(2);
+            if (!$name) {
+                echo "Please provide a name for the new entity.\n";
+                return;
+            }
+            newEntity($name);
+            echo "Entity class '$name' created successfully.\n";
+            break;
         case 'generate':
             generateMigration();
             echo "Migration file generated successfully.\n";
@@ -28,6 +37,7 @@ $application->cli(function (\Core\Http\Request $request, \PDO $db) {
         default:
             echo "Usage: php console.php [command] [options]\n";
             echo "Commands:\n";
+            echo "  new [name]         Create a new entity class with the specified name.\n";
             echo "  generate           Generate a new migration file based on entity definitions.\n";
             echo "  migrate            Execute all pending migrations.\n";
             echo "  show [table_name]  Show all tables or the structure of a specific table.\n";
@@ -107,4 +117,73 @@ function showTable(\PDO $db, string $tableName)
             $column['Key']
         );
     }
+}
+
+function newEntity(string $name): void
+{
+    $fields = [];
+    echo "Define fields for entity '$name'.\n";
+    while (true) {
+        echo "What's field name? (leave blank to create entity): ";
+        $fieldName = trim(fgets(STDIN));
+        if ($fieldName === '') {
+            break;
+        }
+        echo "Field type (string, number, bool, date, etc.): ";
+        $fieldType = trim(fgets(STDIN));
+        if ($fieldType === '') {
+            $fieldType = 'string';
+        }
+        echo "SQL type (e.g. VARCHAR(255), INT, DATETIME): ";
+        $sqlType = trim(fgets(STDIN));
+        if ($sqlType === '') {
+            $sqlType = 'VARCHAR(255)';
+        }
+        echo "Nullable? (yes/no, default: no): ";
+        $nullableInput = strtolower(trim(fgets(STDIN)));
+        $nullable = ($nullableInput === 'yes' || $nullableInput === 'y') ? 'true' : 'false';
+
+        $fields[] = [
+            'name' => $fieldName,
+            'type' => $fieldType,
+            'sql' => strtoupper($sqlType),
+            'nullable' => $nullable,
+        ];
+    }
+
+    $fieldsCode = "    #[Field(name: 'id', type: 'VARCHAR(24)', nullable:false, primary: true)]\n    public string \$id;\n";
+    foreach ($fields as $field) {
+        $phpType = match($field['type']) {
+            'number' => 'int',
+            'bool', 'boolean' => 'bool',
+            'date', 'datetime' => '\\DateTime',
+            default => 'string',
+        };
+        $fieldsCode .= "\n    #[Field(name: '" . strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $field['name'])) . "', type: '{$field['sql']}', nullable:{$field['nullable']})]\n    public {$phpType} \${$field['name']};\n";
+    }
+
+    $entityTemplate = <<<EOT
+<?php
+
+namespace App\Entity;
+
+use Core\Attribute\{Entity,Field};
+
+#[Entity(tableName: '%s')]
+class %s
+{
+%s
+    public function __construct()
+    {
+        \$this->id = createId();
+    }
+}
+EOT;
+
+    $className = ucfirst($name);
+    $tableName = strtolower($name).'s';
+    $entityContent = sprintf($entityTemplate, $tableName, $className, $fieldsCode);
+
+    $entityFile = __DIR__."/app/Entity/{$className}.php";
+    file_put_contents($entityFile, $entityContent);
 }
