@@ -18,10 +18,7 @@ class Application
         $this->basePath = rtrim($basePath, '/');
         $this->container = new Container();
         $this->request = new Request($_GET, $_POST, $_SERVER);
-    }
 
-    public function run(): void
-    {
         $this->loadEnv();
         $this->config = getConfig();
 
@@ -31,8 +28,20 @@ class Application
             $this->config['database']['user'],
             $this->config['database']['password']
         );
-        $this->registerProviders();
+    }
 
+    public function register(array $providers): self
+    {
+        foreach ($providers as $providerClass) {
+            if (class_exists($providerClass) && is_subclass_of($providerClass, 'Core\Abtract\Provider')) {
+                $providerClass::register($this->container);
+            }
+        }
+        return $this;
+    }
+
+    public function run(): void
+    {
         $controllerParam = $this->request->getQuery('controller', 'home');
         $actionParam = $this->request->getQuery('action', 'index');
 
@@ -65,19 +74,9 @@ class Application
         }
     }
 
-    private function registerProviders(): void
+    public function cli(callable $callback): void
     {
-        $providersPath = $this->basePath.'/app/Provider';
-        $providerFiles = glob($providersPath.'/*.php');
-
-        foreach ($providerFiles as $file) {
-            $className = pathinfo($file, PATHINFO_FILENAME);
-            $fullClass = "App\\Provider\\{$className}";
-
-            if (class_exists($fullClass) && is_subclass_of($fullClass, 'Core\Abtract\Provider')) {
-                $fullClass::register($this->container);
-            }
-        }
+        call_user_func($callback, Database::getInstance());
     }
 
     private function loadEnv(string $envPath = '.env'): void
