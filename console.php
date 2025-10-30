@@ -26,12 +26,12 @@ $application->cli(function (\Core\Http\Request $request, \PDO $db) {
             break;
         case 'help':
         default:
-            echo "Usage: php console.php [command]\n";
+            echo "Usage: php console.php [command] [options]\n";
             echo "Commands:\n";
-            echo "  generate   Generate a new migration file based on entity definitions.\n";
-            echo "  migrate    Execute all pending migrations.\n";
-            echo "  show       Show all tables in the database.\n";
-            echo "  help       Display this help message.\n";
+            echo "  generate           Generate a new migration file based on entity definitions.\n";
+            echo "  migrate            Execute all pending migrations.\n";
+            echo "  show [table_name]  Show all tables or the structure of a specific table.\n";
+            echo "  help               Display this help message.\n";
             break;
     }
 });
