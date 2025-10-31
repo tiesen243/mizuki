@@ -17,7 +17,7 @@
       <div class="bg-card text-card-foreground flex flex-col gap-6 py-6 rounded-xl shadow-md border">
         <div class="px-6 flex flex-col">
           <h3 class="font-medium text-lg"><?php echo htmlspecialchars($post->title, ENT_QUOTES, 'UTF-8'); ?></h3>
-          <p class="text-sm text-muted-foreground"><?php echo nl2br(htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8')); ?></p>
+          <p class="text-sm text-muted-foreground line-clamp-1"><?php echo nl2br(htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8')); ?></p>
         </div>
         <div class="px-6 grid grid-cols-2 gap-4">
           <a

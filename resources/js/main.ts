@@ -42,3 +42,20 @@ const disableAnimation = (nonce?: string) => {
     }, 1);
   };
 };
+
+const toastMessage = document.getElementById("toast-message");
+if (toastMessage) {
+  toastMessage.addEventListener("click", () => {
+    toastMessage.classList.add("opacity-0");
+    setTimeout(() => {
+      toastMessage.remove();
+    }, 500);
+  });
+
+  setTimeout(() => {
+    toastMessage.classList.add("opacity-0", "translate-x-100");
+    setTimeout(() => {
+      toastMessage.remove();
+    }, 500);
+  }, 3000);
+}

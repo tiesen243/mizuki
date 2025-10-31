@@ -40,6 +40,7 @@ class PostController extends Controller
             $post->title = $this->request->getPost('title');
             $post->content = $this->request->getPost('content');
             $postRepo->create($post);
+            $this->setFlash('success', 'Post created successfully.');
             return $this->redirect('?controller=post&action=index');
         }
 
@@ -52,6 +53,7 @@ class PostController extends Controller
     {
         $id = $this->request->getQuery('id');
         $postRepo->delete($id);
+        $this->setFlash('success', 'Post deleted successfully.');
         return $this->redirect('?controller=post&action=index');
     }
 }

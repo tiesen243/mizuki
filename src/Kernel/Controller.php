@@ -16,7 +16,8 @@ abstract class Controller
 
         ob_start();
         extract($data);
-        require $this->basePath.'/resources/views/'.$view .'.php';
+        $flash = $this->getFlash();
+        require $this->basePath.'/resources/views/'.$view.'.php';
         $content = ob_get_clean();
 
         ob_start();
@@ -36,5 +37,27 @@ abstract class Controller
     {
         $response = Response::redirect($url);
         return $response;
+    }
+
+    protected function getFlash(): ?array
+    {
+        if (isset($_SESSION['flash'])) {
+            $flash = $_SESSION['flash'];
+            unset($_SESSION['flash']);
+            return $flash;
+        }
+        return null;
+    }
+
+    /**
+    * @param "default"|"success"|"error"|"info"|"warn" $type
+    * @param string $message
+    */
+    protected function setFlash(string $type = "default", string $message = ""): void
+    {
+        $_SESSION['flash'] = [
+            'type' => $type,
+            'message' => $message,
+        ];
     }
 }

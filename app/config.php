@@ -4,6 +4,7 @@ return [
   "app" => [
     "name" => getenv("APP_NAME") ?: "Mizuki",
     "description" => getenv("APP_DESCRIPTION") ?: "Mizuki is a lightweight, open-source blogging platform designed for simplicity and ease of use.",
+    "author" => getenv("APP_AUTHOR") ?: "tiesen243",
     "env" => getenv("APP_ENV") ?: "development",
     "url" => getenv("APP_URL") ?: "http://localhost:8000",
     "viteUrl" => "http://[::1]:5173",

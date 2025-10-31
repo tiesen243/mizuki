@@ -7,20 +7,20 @@ use Core\Attribute\{Entity,Field};
 #[Entity(tableName: 'posts')]
 class Post
 {
-    #[Field(name: 'id', type: 'VARCHAR(24)', nullable:false, primary: true)]
+    #[Field(name: 'id', type: 'VARCHAR(24)', nullable: false, primary: true)]
     public string $id;
 
-    #[Field(name: 'title', type: 'VARCHAR(255)', nullable:false)]
+    #[Field(name: 'title', type: 'VARCHAR(255)', nullable: false)]
     public string $title;
 
-    #[Field(name: 'content', type: 'TEXT', nullable:false)]
+    #[Field(name: 'content', type: 'TEXT', nullable: false)]
     public string $content;
 
-    #[Field(name: 'created_at', type: 'DATETIME', nullable:false)]
-    public mixed $createdAt;
+    #[Field(name: 'created_at', type: 'DATETIME', nullable: false)]
+    public string $createdAt;
 
-    #[Field(name: 'updated_at', type: 'DATETIME', nullable:false)]
-    public mixed $updatedAt;
+    #[Field(name: 'updated_at', type: 'DATETIME', nullable: false)]
+    public string $updatedAt;
 
 
     public function __construct()

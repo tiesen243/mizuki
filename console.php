@@ -164,7 +164,7 @@ function newEntity(string $name): void
             'date', 'datetime' => '\\DateTime',
             default => 'string',
         };
-        $fieldsCode .= "\n    #[Field(name: '" . strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $field['name'])) . "', type: '{$field['sql']}', nullable:{$field['nullable']})]\n    public {$phpType} \${$field['name']};\n";
+        $fieldsCode .= "\n    #[Field(name: '" . strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $field['name'])) . "', type: '{$field['sql']}', nullable: {$field['nullable']})]\n    public {$phpType} \${$field['name']};\n";
     }
 
     $entityTemplate = <<<EOT
