@@ -25,6 +25,10 @@ $application->cli(function (\Core\Http\Request $request, \PDO $db) {
             runMigrations($db);
             echo "Migrations executed successfully.\n";
             break;
+        case "run":
+            runSqlFile($db, $request->getArgv(2) ?? '');
+            echo "SQL file executed successfully.\n";
+            break;
         case 'show':
             $tableName = $request->getArgv(2);
             if ($tableName) {
@@ -40,6 +44,7 @@ $application->cli(function (\Core\Http\Request $request, \PDO $db) {
             echo "  new [name]         Create a new entity class with the specified name.\n";
             echo "  generate           Generate a new migration file based on entity definitions.\n";
             echo "  migrate            Execute all pending migrations.\n";
+            echo "  run [file_name]    Run a specific SQL file located in the database directory.\n";
             echo "  show [table_name]  Show all tables or the structure of a specific table.\n";
             echo "  help               Display this help message.\n";
             break;
@@ -81,13 +86,13 @@ function generateMigration()
     }
 
     $date = date('Ymd_His');
-    $migrationFile = __DIR__."/migrations/migration-{$date}.sql";
+    $migrationFile = __DIR__."/database/migrations/migration-{$date}.sql";
     file_put_contents($migrationFile, implode("\n\n", $sqlStatements));
 }
 
 function runMigrations(\PDO $db)
 {
-    $migrationFiles = glob(__DIR__.'/migrations/migration-*.sql');
+    $migrationFiles = glob(__DIR__.'/database/migrations/migration-*.sql');
     foreach ($migrationFiles as $file) {
         $sql = file_get_contents($file);
         $db->exec($sql);
@@ -186,4 +191,15 @@ EOT;
 
     $entityFile = __DIR__."/app/Entity/{$className}.php";
     file_put_contents($entityFile, $entityContent);
+}
+
+function runSqlFile(\PDO $db, string $fileName): void
+{
+    $filePath = __DIR__."/database/{$fileName}.sql";
+    if (!file_exists($filePath)) {
+        echo "SQL file '{$fileName}' does not exist.\n";
+        return;
+    }
+    $sql = file_get_contents($filePath);
+    $db->exec($sql);
 }

@@ -1,7 +1,7 @@
 {
   "name": "tiesen243/mizuki",
-  "type": "project",
   "license": "MIT",
+  "type": "project",
   "autoload": {
     "psr-4": {
       "App\\": "app/",

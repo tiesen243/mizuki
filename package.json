@@ -2,8 +2,8 @@
   "name": "@tiesen243/mizuki",
   "scripts": {
     "build": "vite build",
-    "dev": "bunx --bun concurrently \"vite\" \"php -S localhost:8000 -t public\"",
-    "migrate": "php src/migrate.php"
+    "dev": "bunx --bun concurrently --prefix-colors=\"#646CFF,#777BB4\" \"vite\" \"php -S localhost:8000 -t public\" --names \"VITE,PHP\"",
+    "start": "APP_ENV=production php -S localhost:8000 -t public"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.16",

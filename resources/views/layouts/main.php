@@ -33,10 +33,10 @@
   </head>
 
   <body class="flex flex-col min-h-dvh antialiased font-sans">
-    <header class="bg-background/70 h-14 flex items-center border-b sticky inset-0">
+    <header class="bg-background/70 h-14 flex items-center border-b sticky backdrop-blur-2xl backdrop-saturate-150 inset-0">
       <div class="container flex items-center justify-between gap-4">
         <a href="/" class="text-lg font-bold"><?php echo getConfig()['app']['name']; ?></a>
-        <nav class="flex-1 flex items-center justify-end gap-4 text-sm font-medium [&_a]:hover:underline">
+        <nav class="flex-1 flex items-center justify-end gap-4 text-sm font-medium [&_a]:hover:underline [&_a]:underline-offset-4">
           <a href="/">Home</a>
           <a href="/?controller=post&action=index">Posts</a>
         </nav>
