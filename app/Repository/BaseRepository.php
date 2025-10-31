@@ -20,6 +20,9 @@ abstract class BaseRepository implements IBaseRepository
     public function __construct()
     {
         $this->db = Database::getInstance();
+        $tableAttributes = $this->getTableAttributes();
+        $this->tableName = $tableAttributes->name;
+        $this->primaryKey = $tableAttributes->primaryKey;
     }
 
     /** @return TEntity[] */
@@ -72,7 +75,7 @@ abstract class BaseRepository implements IBaseRepository
         return $stmt->execute(['id' => $id]);
     }
 
-    private function getColumns(): array
+    protected function getColumns(): array
     {
         $columns = [];
         $reflection = new \ReflectionClass($this->entity);
@@ -86,5 +89,12 @@ abstract class BaseRepository implements IBaseRepository
             }
         }
         return $columns;
+    }
+
+    private function getTableAttributes(): \Core\Attribute\Table
+    {
+        $reflection = new \ReflectionClass($this->entity);
+        $attributes = $reflection->getAttributes(\Core\Attribute\Table::class);
+        return $attributes[0]->newInstance();
     }
 }

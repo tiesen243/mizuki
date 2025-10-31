@@ -15,11 +15,11 @@ Router::get('/', [HomeController::class, 'index']);
 /*
  * Posts Routes
  * ----------------
- * Web Endpoints
  * /posts            - List all posts
  * /posts/:id        - View a specific post
  * /posts/create     - Create new post
  * /posts/:id/delete - Delete a specific post
+ * /api/posts        - Search posts (Query Parameter: q)
  */
 
 Router::get('/posts', [PostController::class, 'index']);
@@ -33,3 +33,5 @@ Router::get('/posts/:id/edit', [PostController::class, 'edit']);
 Router::post('/posts/:id/edit', [PostController::class, 'edit']);
 
 Router::post('/posts/:id/delete', [PostController::class, 'delete']);
+
+Router::get('/api/posts', [PostController::class, 'search']);

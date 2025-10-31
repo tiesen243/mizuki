@@ -9,4 +9,8 @@ use App\Entity\Post;
  */
 interface IPostRepository extends IBaseRepository
 {
+    /**
+     * @return Post[]
+     */
+    public function byTitle(string $title): array;
 }

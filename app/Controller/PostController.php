@@ -4,8 +4,8 @@ namespace App\Controller;
 
 use App\Contract\Repository\IPostRepository;
 use App\Entity\Post;
+use Core\Abstract\Controller;
 use Core\Http\Response;
-use Core\Kernel\Controller;
 
 class PostController extends Controller
 {
@@ -15,6 +15,16 @@ class PostController extends Controller
         return $this->render('post/index', [
             'title' => 'All Posts',
             'posts' => $posts
+        ]);
+    }
+
+    public function search(IPostRepository $postRepo): Response
+    {
+        $query = $this->request->getQuery('q', '');
+        $posts = $postRepo->byTitle($query);
+        return $this->json([
+            'message' => "Search results for '{$query}'",
+            'results' => $posts
         ]);
     }
 

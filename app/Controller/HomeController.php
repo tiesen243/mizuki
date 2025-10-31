@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
+use Core\Abstract\Controller;
 use Core\Http\Response;
-use Core\Kernel\Controller;
 
 class HomeController extends Controller
 {

@@ -2,13 +2,12 @@
 
 namespace App\Entity;
 
-use Core\Attribute\Field;
+use Core\Abstract\Entity;
+use Core\Attribute\{Field,Table};
 
-class Post
+#[Table(name: 'posts', primaryKey: 'id')]
+class Post extends Entity
 {
-    public static string $tableName = 'posts';
-    public static string $primaryKey = 'id';
-
     #[Field(name: 'id')]
     public string $id = '';
 

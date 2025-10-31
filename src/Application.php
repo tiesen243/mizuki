@@ -42,41 +42,15 @@ class Application
             $uri = rtrim($uri, '/');
         }
 
-        $response = Response::json(['message' => 'Not Found'], 404);
         if (isset($routes[$method][$uri])) {
-            $handler = $routes[$method][$uri];
-            if (is_callable($handler)) {
-                $response = call_user_func($handler, $this->request);
-            } elseif (is_array($handler) && count($handler) === 2) {
-                $controller = $this->container->make($handler[0], [
-                    'request' => $this->request,
-                    'basePath' => $this->basePath
-                ]);
-                if (!method_exists($controller, $handler[1])) {
-                    $response = Response::json(['message' => 'Method Not Found'], 404);
-                } else {
-                    $response = $this->container->call($controller, $handler[1]);
-                }
-            }
+            $response = $this->dispatch($routes[$method][$uri]);
         } else {
             foreach ($routes[$method] as $routePattern => $handler) {
                 $pattern = preg_replace('#:([\w]+)#', '(?P<$1>[^/]+)', $routePattern);
                 $pattern = '#^' . $pattern . '$#';
                 if (preg_match($pattern, $uri, $matches)) {
                     $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
-                    if (is_callable($handler)) {
-                        $response = call_user_func($handler, $this->request, ...array_values($params));
-                    } elseif (is_array($handler) && count($handler) === 2) {
-                        $controller = $this->container->make($handler[0], [
-                            'request' => $this->request,
-                            'basePath' => $this->basePath
-                        ]);
-                        if (!method_exists($controller, $handler[1])) {
-                            $response = Response::json(['message' => 'Method Not Found'], 404);
-                        } else {
-                            $response = $this->container->call($controller, $handler[1], $params);
-                        }
-                    }
+                    $response = $this->dispatch($handler, $params);
                 };
             }
         }
@@ -86,6 +60,31 @@ class Application
         }
         $this->setCorsHeaders();
         $response->send();
+    }
+
+    private function dispatch(callable|array $handler, array $params = []): Response
+    {
+        $response = Response::json(['message' => 'Not Found'], 404);
+
+        if (is_callable($handler)) {
+            $response = call_user_func($handler, $this->request, ...array_values($params));
+        } elseif (is_array($handler) && count($handler) === 2) {
+            if (!is_subclass_of($handler[0], \Core\Abstract\Controller::class)) {
+                $response = Response::json(['message' => 'Controller Not Found'], 404);
+            } else {
+                $controller = $this->container->make($handler[0], [
+                    'request' => $this->request,
+                    'basePath' => $this->basePath
+                ]);
+
+                if (!method_exists($controller, $handler[1])) {
+                    $response = Response::json(['message' => 'Method Not Found'], 404);
+                } else {
+                    $response = $this->container->call($controller, $handler[1], $params);
+                }
+            }
+        }
+        return $response;
     }
 
     private function loadEnv(string $envPath = '.env'): void

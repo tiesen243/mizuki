@@ -1,9 +1,9 @@
 <?php
 
-namespace Core\Kernel;
+namespace Core\Abstract;
 
-use Core\Http\Request;
-use Core\Http\Response;
+use Core\Http\{Request,Response};
+use Core\Kernel\Database;
 
 abstract class Controller
 {
