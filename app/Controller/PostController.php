@@ -18,19 +18,6 @@ class PostController extends Controller
         ]);
     }
 
-    public function all(IPostRepository $postRepo): Response
-    {
-        $posts = $postRepo->all();
-        return $this->json(['message' => 'Posts retrieved successfully', 'posts' => $posts]);
-    }
-
-    public function byTitle(IPostRepository $postRepo): Response
-    {
-        $title = $this->request->getQuery('title', '');
-        $posts = $postRepo->findByTitle($title);
-        return $this->json(['message' => 'Posts retrieved by name successfully', 'posts' => $posts]);
-    }
-
     public function show(string $id, IPostRepository $postRepo): Response
     {
         $post = $postRepo->find($id);
@@ -45,68 +32,87 @@ class PostController extends Controller
         }
     }
 
-    public function one(string $id, IPostRepository $postRepo): Response
-    {
-        $post = $postRepo->find($id);
-
-        if (!$post) {
-            return $this->json(['message' => 'Post not found'], 404);
-        } else {
-            return $this->json(['message' => 'Post found', 'post' => $post]);
-        }
-    }
-
     public function create(IPostRepository $postRepo): Response
     {
-        if ($this->request->method() === 'POST') {
-            $post = new Post();
-            $post->title = $this->request->getPost('title');
-            $post->content = $this->request->getPost('content');
-            $postRepo->store($post);
-
-            $this->setFlash('success', 'Post created successfully.');
-            return $this->redirect("/posts/{$post->id}");
+        if ($this->request->method() === 'GET') {
+            return $this->render('post/create', [
+                'title' => 'Create New Post'
+            ]);
         }
 
-        return $this->render('post/create', [
-            'title' => 'Create New Post'
-        ]);
-    }
-
-    public function store(IPostRepository $postRepo): Response
-    {
         $post = new Post();
         $post->title = $this->request->getPost('title');
         $post->content = $this->request->getPost('content');
-        $postRepo->store($post);
-        return $this->json(['message' => 'Post created successfully', 'post' => $post], 201);
+        $errors = $post->validate();
+        if (!empty($errors)) {
+            return $this->redirect('/posts/create', [
+                'errors' => $errors,
+                'old' => ['title' => $post->title, 'content' => $post->content]
+            ]);
+        }
+
+        $this->db->beginTransaction();
+        try {
+            $postRepo->store($post);
+            $this->db->commit();
+            $this->setFlash('success', 'Post created successfully.');
+            return $this->redirect("/posts/{$post->id}");
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            $this->setFlash('error', 'Failed to create post: ' . $e->getMessage());
+            return $this->redirect('/posts/create');
+        }
     }
 
-    public function update(string $id, IPostRepository $postRepo): Response
+    public function edit(string $id, IPostRepository $postRepo): Response
     {
         $post = $postRepo->find($id);
-
         if (!$post) {
             return $this->json(['message' => 'Post not found'], 404);
         }
 
-        $post->title = $this->request->getPost('title', $post->title);
-        $post->content = $this->request->getPost('content', $post->content);
-        $postRepo->store($post);
+        if ($this->request->method() === 'GET') {
+            return $this->render('post/edit', [
+                'title' => 'Edit Post',
+                'post' => $post
+            ]);
+        }
 
-        return $this->json(['message' => 'Post updated successfully', 'post' => $post]);
+        $post->title = $this->request->getPost('title');
+        $post->content = $this->request->getPost('content');
+        $errors = $post->validate();
+        if (!empty($errors)) {
+            return $this->redirect("/posts/{$id}/edit", [
+                'errors' => $errors,
+                'old' => ['title' => $post->title, 'content' => $post->content]
+            ]);
+        }
+
+        $this->db->beginTransaction();
+        try {
+            $postRepo->store($post);
+            $this->db->commit();
+            $this->setFlash('success', 'Post updated successfully.');
+            return $this->redirect("/posts/{$post->id}");
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            $this->setFlash('error', 'Failed to update post: ' . $e->getMessage());
+            return $this->redirect("/posts/{$id}/edit");
+        }
     }
 
     public function delete(string $id, IPostRepository $postRepo): Response
     {
-        $postRepo->delete($id);
-        $this->setFlash('success', 'Post deleted successfully.');
-        return $this->redirect('/posts');
-    }
-
-    public function destroy(string $id, IPostRepository $postRepo): Response
-    {
-        $postRepo->delete($id);
-        return $this->json(['message' => 'Post deleted successfully']);
+        $this->db->beginTransaction();
+        try {
+            $postRepo->delete($id);
+            $this->db->commit();
+            $this->setFlash('success', 'Post deleted successfully.');
+            return $this->redirect('/posts');
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            $this->setFlash('error', 'Failed to delete post: ' . $e->getMessage());
+            return $this->redirect('/posts');
+        }
     }
 }

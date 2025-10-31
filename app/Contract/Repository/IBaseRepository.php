@@ -20,11 +20,13 @@ interface IBaseRepository
 
     /**
      * @param TEntity $entity
+     * @return bool
      */
-    public function store(object $entity): void;
+    public function store(object $entity): bool;
 
     /**
      * @param string $id
+     * @return bool
      */
-    public function delete(string $id): void;
+    public function delete(string $id): bool;
 }

@@ -7,12 +7,19 @@ use Core\Http\Response;
 
 abstract class Controller
 {
+    protected \PDO $db;
+
     public function __construct(protected Request $request, private string $basePath)
     {
+        $this->db = Database::getInstance();
     }
 
     protected function render(string $view, array $data = [], string $layout = 'main'): Response
     {
+        if (isset($_SESSION['redirect_data'])) {
+            $data = array_merge($data, $_SESSION['redirect_data']);
+            unset($_SESSION['redirect_data']);
+        }
 
         ob_start();
         extract($data);
@@ -33,8 +40,11 @@ abstract class Controller
         return $response;
     }
 
-    protected function redirect(string $url): Response
+    protected function redirect(string $url, array $data = []): Response
     {
+        if (!empty($data)) {
+            $_SESSION['redirect_data'] = $data;
+        }
         $response = Response::redirect($url);
         return $response;
     }

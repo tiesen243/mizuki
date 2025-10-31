@@ -9,6 +9,7 @@ use Core\Kernel\Router;
  * ----------------
  * / - Home Page
  */
+
 Router::get('/', [HomeController::class, 'index']);
 
 /*
@@ -19,25 +20,16 @@ Router::get('/', [HomeController::class, 'index']);
  * /posts/:id        - View a specific post
  * /posts/create     - Create new post
  * /posts/:id/delete - Delete a specific post
- *
- * API Endpoints
- * /api/posts            - List all posts (GET), Create new post (POST)
- * /api/posts/by-title   - List posts by title (GET)
- * /api/posts/:id        - View a specific post (GET)
- * /api/posts/:id/delete - Delete a specific post (POST)
  */
+
 Router::get('/posts', [PostController::class, 'index']);
 
 Router::get('/posts/create', [PostController::class, 'create']);
 Router::post('/posts/create', [PostController::class, 'create']);
 
 Router::get('/posts/:id', [PostController::class, 'show']);
+
+Router::get('/posts/:id/edit', [PostController::class, 'edit']);
+Router::post('/posts/:id/edit', [PostController::class, 'edit']);
+
 Router::post('/posts/:id/delete', [PostController::class, 'delete']);
-
-Router::get('/api/posts', [PostController::class, 'all']);
-Router::post('/api/posts', [PostController::class, 'store']);
-Router::get('/api/posts/by-title', [PostController::class, 'byTitle']);
-
-Router::get('/api/posts/:id', [PostController::class, 'one']);
-Router::post('/api/posts/:id/edit', [PostController::class, 'update']);
-Router::post('/api/posts/:id/delete', [PostController::class, 'destroy']);

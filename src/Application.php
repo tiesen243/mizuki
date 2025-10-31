@@ -1,9 +1,9 @@
 <?php
 
-namespace Core\Kernel;
+namespace Core;
 
-use Core\Http\Request;
-use Core\Http\Response;
+use Core\Http\{Request,Response};
+use Core\Kernel\{Container,Database,Router};
 
 class Application
 {
@@ -86,17 +86,6 @@ class Application
         }
         $this->setCorsHeaders();
         $response->send();
-    }
-
-    public function cli(callable $callback): void
-    {
-        $this->request = new Request([], [], $_SERVER);
-
-        try {
-            call_user_func($callback, $this->request, Database::getInstance());
-        } catch (\Throwable $e) {
-            echo 'Error: ' . $e->getMessage() . PHP_EOL;
-        }
     }
 
     private function loadEnv(string $envPath = '.env'): void
