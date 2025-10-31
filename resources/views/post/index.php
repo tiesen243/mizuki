@@ -29,7 +29,7 @@
           <form action="/posts/<?php echo $post->id; ?>/delete" method="post">
             <button
               type="submit"
-              class="inline-flex items-center justify-center h-9 px-3 rounded-md bg-destructive text-destructive-foreground text-sm font-medium hover:bg-destructive/80 transition-colors w-full"
+              class="inline-flex items-center justify-center h-9 px-3 rounded-md bg-destructive text-white text-sm font-medium hover:bg-destructive/80 transition-colors w-full"
               onclick="return confirm('Are you sure you want to delete this post?');"
             >
               Delete
