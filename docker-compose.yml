@@ -20,6 +20,7 @@ services:
       - "3306:3306"
     volumes:
       - mizuki_data:/var/lib/mysql
+      - ./migrations:/docker-entrypoint-initdb.d
 
   # phpmyadmin:
   #   image: phpmyadmin/phpmyadmin
