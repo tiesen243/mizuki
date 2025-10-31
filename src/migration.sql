@@ -1,3 +1,9 @@
+-- create database
+CREATE DATABASE IF NOT EXISTS `mizuki_db`
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+USE `mizuki_db`;
+
 -- create posts table
 CREATE TABLE IF NOT EXISTS `posts` (
   `id` VARCHAR(24) NOT NULL PRIMARY KEY,

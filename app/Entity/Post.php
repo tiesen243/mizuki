@@ -25,8 +25,9 @@ class Post extends Entity
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime()->format('Y-m-d H:i:s');
-        $this->updatedAt = new \DateTime()->format('Y-m-d H:i:s');
+        $now = new \DateTimeImmutable();
+        $this->createdAt = $now->format('Y-m-d H:i:s');
+        $this->updatedAt = $now->format('Y-m-d H:i:s');
     }
 
     public function validate(): array
