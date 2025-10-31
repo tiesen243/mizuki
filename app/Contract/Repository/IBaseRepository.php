@@ -21,12 +21,7 @@ interface IBaseRepository
     /**
      * @param TEntity $entity
      */
-    public function create(object $entity): void;
-
-    /**
-     * @param TEntity $entity
-     */
-    public function update(string $id, object $entity): void;
+    public function store(object $entity): void;
 
     /**
      * @param string $id

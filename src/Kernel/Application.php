@@ -31,38 +31,61 @@ class Application
 
     public function run(): void
     {
+        require_once $this->basePath.'/app/routes.php';
+
         $this->request = new Request($_GET, $_POST, $_SERVER);
+        $routes = Router::getRoutes();
 
-        $controllerParam = $this->request->getQuery('controller', 'home');
-        $actionParam = $this->request->getQuery('action', 'index');
-
-        $controllerName = ucfirst(strtolower($controllerParam)) . 'Controller';
-        $controllerClass = "App\\Controller\\{$controllerName}";
-
-        try {
-            if (!class_exists($controllerClass)) {
-                throw new \Exception("Controller {$controllerName} not found.");
-            }
-
-            $controller = $this->container->make($controllerClass, [
-                'request' => $this->request,
-                'basePath' => $this->basePath
-            ]);
-
-            if (!method_exists($controller, $actionParam)) {
-                throw new \Exception("Action {$actionParam} not found in controller {$controllerName}.");
-            }
-
-            $response = $this->container->call($controller, $actionParam);
-            if ($response instanceof Response) {
-                $response->send();
-            } else {
-                echo $response;
-            }
-        } catch (\Throwable $e) {
-            $response = new Response('Internal Server Error: ' . $e->getMessage(), 500);
-            $response->send();
+        $method = $this->request->method();
+        $uri = parse_url($this->request->uri(), PHP_URL_PATH);
+        if ($uri !== '/' && substr($uri, -1) === '/') {
+            $uri = rtrim($uri, '/');
         }
+
+        $response = Response::json(['message' => 'Not Found'], 404);
+        if (isset($routes[$method][$uri])) {
+            $handler = $routes[$method][$uri];
+            if (is_callable($handler)) {
+                $response = call_user_func($handler, $this->request);
+            } elseif (is_array($handler) && count($handler) === 2) {
+                $controller = $this->container->make($handler[0], [
+                    'request' => $this->request,
+                    'basePath' => $this->basePath
+                ]);
+                if (!method_exists($controller, $handler[1])) {
+                    $response = Response::json(['message' => 'Method Not Found'], 404);
+                } else {
+                    $response = $this->container->call($controller, $handler[1]);
+                }
+            }
+        } else {
+            foreach ($routes[$method] as $routePattern => $handler) {
+                $pattern = preg_replace('#:([\w]+)#', '(?P<$1>[^/]+)', $routePattern);
+                $pattern = '#^' . $pattern . '$#';
+                if (preg_match($pattern, $uri, $matches)) {
+                    $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+                    if (is_callable($handler)) {
+                        $response = call_user_func($handler, $this->request, ...array_values($params));
+                    } elseif (is_array($handler) && count($handler) === 2) {
+                        $controller = $this->container->make($handler[0], [
+                            'request' => $this->request,
+                            'basePath' => $this->basePath
+                        ]);
+                        if (!method_exists($controller, $handler[1])) {
+                            $response = Response::json(['message' => 'Method Not Found'], 404);
+                        } else {
+                            $response = $this->container->call($controller, $handler[1], $params);
+                        }
+                    }
+                };
+            }
+        }
+
+        if (!$response instanceof Response) {
+            $response = new Response($response) ;
+        }
+        $this->setCorsHeaders();
+        $response->send();
     }
 
     public function cli(callable $callback): void
@@ -94,6 +117,22 @@ class Application
             if (!getenv($key)) {
                 putenv("{$key}={$value}");
             }
+        }
+    }
+
+    private function setCorsHeaders(): void
+    {
+        $corsConfig = $this->config['cors'] ?? [];
+        $allowedOrigins = $corsConfig['allowed_origins'] ?? [];
+        $allowedMethods = $corsConfig['allowed_methods'] ?? [];
+        $allowedHeaders = $corsConfig['allowed_headers'] ?? [];
+        $allowCredentials = $corsConfig['allow_credentials'] ?? false;
+
+        header('Access-Control-Allow-Origin: ' . implode(',', $allowedOrigins));
+        header('Access-Control-Allow-Methods: ' . implode(',', $allowedMethods));
+        header('Access-Control-Allow-Headers: ' . implode(',', $allowedHeaders));
+        if ($allowCredentials) {
+            header('Access-Control-Allow-Credentials: true');
         }
     }
 }

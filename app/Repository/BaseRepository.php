@@ -11,6 +11,9 @@ use Core\Kernel\Database;
  */
 abstract class BaseRepository implements IBaseRepository
 {
+    // Static cache for metadata per entity class
+    private static array $metadataCache = [];
+
     protected \PDO $db;
     /** @var TEntity */
     protected object $entity;
@@ -29,82 +32,112 @@ abstract class BaseRepository implements IBaseRepository
     /** @return TEntity[] */
     public function all(): array
     {
-        $columns = implode(', ', array_map(fn ($col) => "{$col['name']} AS {$col['prop']}", $this->columns));
+        $columns = $this->getSelectColumns();
         $stmt = $this->db->prepare("SELECT {$columns} FROM {$this->tableName}");
         $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, get_class($this->entity)) ?: [];
+        return $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, get_class($this->entity));
     }
 
     /** @return TEntity|null */
     public function find(string $id): ?object
     {
-        $columns = implode(', ', array_map(fn ($col) => "{$col['name']} AS {$col['prop']}", $this->columns));
-        $stmt = $this->db->prepare("SELECT {$columns} FROM {$this->tableName} WHERE {$this->primaryKey} = :{$this->primaryKey} LIMIT 1");
-        $stmt->execute([":{$this->primaryKey}" => $id]);
+        $columns = $this->getSelectColumns();
+        $stmt = $this->db->prepare("SELECT {$columns} FROM {$this->tableName} WHERE {$this->primaryKey} = :pk LIMIT 1");
+        $stmt->execute([':pk' => $id]);
         return $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, get_class($this->entity))[0] ?? null;
     }
 
     /** @param TEntity $entity */
-    public function create(object $entity): void
+    public function store(object $entity): void
     {
         $names = array_column($this->columns, 'name');
         $placeholders = array_map(fn ($n) => ":$n", $names);
+        $primaryKeyValue = $entity->{$this->getPrimaryKeyProp()};
 
         $values = [];
         foreach ($this->columns as $col) {
-            $values[":{$col['name']}"] = $entity->{$col['prop']};
-        }
-
-        $stmt = $this->db->prepare("INSERT INTO {$this->tableName} (" . implode(', ', $names) . ") VALUES (" . implode(', ', $placeholders) . ")");
-        $stmt->execute($values);
-    }
-
-    /** @param TEntity $entity */
-    public function update(string $id, object $entity): void
-    {
-        $setClauses = [];
-        $values = [];
-        foreach ($this->columns as $col) {
-            if ($col['primary']) {
-                continue;
+            $value = $entity->{$col['prop']};
+            if ($value instanceof \DateTime) {
+                $value = $value->format('Y-m-d H:i:s');
             }
-            $setClauses[] = "{$col['name']} = :{$col['name']}";
-            $values[":{$col['name']}"] = $entity->{$col['prop']};
+            $values[":{$col['name']}"] = $value;
         }
-        $values[":{$this->primaryKey}"] = $id;
 
-        $stmt = $this->db->prepare("UPDATE {$this->tableName} SET " . implode(', ', $setClauses) . " WHERE {$this->primaryKey} = :{$this->primaryKey}");
+        if (empty($primaryKeyValue)) {
+            $values[":{$this->primaryKey}"] = createId();
+            $stmt = $this->db->prepare("INSERT INTO {$this->tableName} (" . implode(', ', $names) . ") VALUES (" . implode(', ', $placeholders) . ")");
+        } else {
+            $updateAssignments = implode(', ', array_map(fn ($n) => "{$n} = :{$n}", $names));
+            $stmt = $this->db->prepare("UPDATE {$this->tableName} SET {$updateAssignments} WHERE {$this->primaryKey} = :{$this->primaryKey}");
+        }
+
         $stmt->execute($values);
     }
 
     public function delete(string $id): void
     {
-        $stmt = $this->db->prepare("DELETE FROM {$this->tableName} WHERE {$this->primaryKey} = :{$this->primaryKey}");
-        $stmt->execute([":{$this->primaryKey}" => $id]);
+        $stmt = $this->db->prepare("DELETE FROM {$this->tableName} WHERE {$this->primaryKey} = :pk");
+        $stmt->execute([':pk' => $id]);
     }
 
     private function initializeMetadata(): void
     {
-        $reflection = new \ReflectionClass($this->entity);
+        $class = get_class($this->entity);
+        if (!isset(self::$metadataCache[$class])) {
+            $reflection = new \ReflectionClass($this->entity);
 
-        $entityAttr = $reflection->getAttributes(\Core\Attribute\Entity::class)[0] ?? null;
-        $this->tableName = $entityAttr?->newInstance()?->tableName ?? throw new \Exception("Entity attribute missing");
+            $entityAttr = $reflection->getAttributes(\Core\Attribute\Entity::class)[0] ?? null;
+            $tableName = $entityAttr?->newInstance()?->tableName ?? throw new \Exception("Entity attribute missing");
 
-        $this->columns = [];
-        foreach ($reflection->getProperties() as $prop) {
-            $fieldAttr = $prop->getAttributes(\Core\Attribute\Field::class)[0] ?? null;
-            if ($fieldAttr) {
-                $field = $fieldAttr->newInstance();
-                $this->columns[] = ['name' => $field->name, 'prop' => $prop->getName(), 'type' => $field->type, 'primary' => $field->primary];
-                if ($field->primary) {
-                    $this->primaryKey = $field->name;
+            $columns = [];
+            $primaryKey = null;
+            foreach ($reflection->getProperties() as $prop) {
+                $fieldAttr = $prop->getAttributes(\Core\Attribute\Field::class)[0] ?? null;
+                if ($fieldAttr) {
+                    $field = $fieldAttr->newInstance();
+                    $columns[] = [
+                        'name' => $field->name,
+                        'prop' => $prop->getName(),
+                        'type' => $field->type,
+                        'primary' => $field->primary
+                    ];
+                    if ($field->primary) {
+                        $primaryKey = $field->name;
+                    }
                 }
+            }
 
+            if (!$primaryKey) {
+                throw new \Exception("Primary key not defined for entity " . $class);
+            }
+
+            self::$metadataCache[$class] = [
+                'tableName' => $tableName,
+                'primaryKey' => $primaryKey,
+                'columns' => $columns,
+                'primaryKeyProp' => array_column($columns, 'prop', 'name')[$primaryKey] ?? $primaryKey,
+            ];
+        }
+
+        $meta = self::$metadataCache[$class];
+        $this->tableName = $meta['tableName'];
+        $this->primaryKey = $meta['primaryKey'];
+        $this->columns = $meta['columns'];
+    }
+
+    private function getSelectColumns(): string
+    {
+        return implode(', ', array_map(fn ($col) => "{$col['name']} AS {$col['prop']}", $this->columns));
+    }
+
+    private function getPrimaryKeyProp(): string
+    {
+        foreach ($this->columns as $col) {
+            if ($col['primary']) {
+                return $col['prop'];
             }
         }
-
-        if (!$this->primaryKey) {
-            throw new \Exception("Primary key not defined for entity " . get_class($this->entity));
-        }
+        return $this->primaryKey;
     }
+
 }

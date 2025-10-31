@@ -7,7 +7,7 @@
 
   <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-bold">Blog Posts</h2>
-    <a href="/?controller=post&action=create" class="inline-flex items-center justify-center h-9 px-3 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/80 transition-colors">
+    <a href="/posts/create" class="inline-flex items-center justify-center h-9 px-3 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/80 transition-colors">
       Create New Post
     </a>
   </div>
@@ -21,18 +21,20 @@
         </div>
         <div class="px-6 grid grid-cols-2 gap-4">
           <a
-            href="/?controller=post&action=show&id=<?php echo $post->id; ?>"
+            href="/posts/<?php echo $post->id; ?>"
             class="inline-flex items-center justify-center h-9 px-3 rounded-md bg-secondary text-secondary-foreground text-sm font-medium hover:bg-secondary/80 transition-colors"
           >
             Read More
           </a>
-          <a
-            href="/?controller=post&action=delete&id=<?php echo $post->id; ?>"
-            class="inline-flex items-center justify-center h-9 px-3 rounded-md bg-destructive text-white text-sm font-medium hover:bg-destructive/80 transition-colors"
-            onclick="return confirm('Are you sure you want to delete this post?');"
-          >
-            Delete
-          </a>
+          <form action="/posts/<?php echo $post->id; ?>/delete" method="post">
+            <button
+              type="submit"
+              class="inline-flex items-center justify-center h-9 px-3 rounded-md bg-destructive text-destructive-foreground text-sm font-medium hover:bg-destructive/80 transition-colors w-full"
+              onclick="return confirm('Are you sure you want to delete this post?');"
+            >
+              Delete
+            </button>
+          </form>
         </div>
       </div>
     <?php endforeach; ?>

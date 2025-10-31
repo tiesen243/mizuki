@@ -20,6 +20,11 @@ class Request
         return $this->server['REQUEST_METHOD'] ?? 'GET';
     }
 
+    public function uri(): string
+    {
+        return $this->server['REQUEST_URI'] ?? '/';
+    }
+
     public function getQuery(string $key, $default = null)
     {
         return $this->get[$key] ?? $default;

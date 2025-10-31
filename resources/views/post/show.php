@@ -1,5 +1,5 @@
 <main class="container py-4">
-  <a href="/?controller=post&action=index" class="inline-flex items-center justify-center h-9 px-3 rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground mb-6">
+  <a href="/posts" class="inline-flex items-center justify-center h-9 px-3 rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground mb-6">
     &larr; Back to Posts
   </a>
 

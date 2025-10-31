@@ -18,9 +18,14 @@ class PostController extends Controller
         ]);
     }
 
-    public function show(IPostRepository $postRepo): Response
+    public function all(IPostRepository $postRepo): Response
     {
-        $id = $this->request->getQuery('id');
+        $posts = $postRepo->all();
+        return $this->json(['message' => 'Posts retrieved successfully', 'posts' => array_map(fn ($post) => $post->toArray(), $posts)]);
+    }
+
+    public function show(string $id, IPostRepository $postRepo): Response
+    {
         $post = $postRepo->find($id);
 
         if (!$post) {
@@ -33,15 +38,27 @@ class PostController extends Controller
         }
     }
 
+    public function one(string $id, IPostRepository $postRepo): Response
+    {
+        $post = $postRepo->find($id);
+
+        if (!$post) {
+            return $this->json(['message' => 'Post not found'], 404);
+        } else {
+            return $this->json(['message' => 'Post found', 'post' => $post->toArray()]);
+        }
+    }
+
     public function create(IPostRepository $postRepo): Response
     {
         if ($this->request->method() === 'POST') {
             $post = new Post();
             $post->title = $this->request->getPost('title');
             $post->content = $this->request->getPost('content');
-            $postRepo->create($post);
+            $postRepo->store($post);
+
             $this->setFlash('success', 'Post created successfully.');
-            return $this->redirect('?controller=post&action=index');
+            return $this->redirect("/posts/{$post->id}");
         }
 
         return $this->render('post/create', [
@@ -49,11 +66,40 @@ class PostController extends Controller
         ]);
     }
 
-    public function delete(IPostRepository $postRepo): Response
+    public function store(IPostRepository $postRepo): Response
     {
-        $id = $this->request->getQuery('id');
+        $post = new Post();
+        $post->title = $this->request->getPost('title');
+        $post->content = $this->request->getPost('content');
+        $postRepo->store($post);
+        return $this->json(['message' => 'Post created successfully', 'post' => $post], 201);
+    }
+
+    public function update(string $id, IPostRepository $postRepo): Response
+    {
+        $post = $postRepo->find($id);
+
+        if (!$post) {
+            return $this->json(['message' => 'Post not found'], 404);
+        }
+
+        $post->title = $this->request->getPost('title', $post->title);
+        $post->content = $this->request->getPost('content', $post->content);
+        $postRepo->store($post);
+
+        return $this->json(['message' => 'Post updated successfully', 'post' => $post]);
+    }
+
+    public function delete(string $id, IPostRepository $postRepo): Response
+    {
         $postRepo->delete($id);
         $this->setFlash('success', 'Post deleted successfully.');
-        return $this->redirect('?controller=post&action=index');
+        return $this->redirect('/posts');
+    }
+
+    public function destroy(string $id, IPostRepository $postRepo): Response
+    {
+        $postRepo->delete($id);
+        return $this->json(['message' => 'Post deleted successfully']);
     }
 }

@@ -35,11 +35,11 @@ class Container
         return $reflector->newInstanceArgs($dependencies);
     }
 
-    public function call($instance, string $method)
+    public function call($instance, string $method, array $manual = [])
     {
         $reflector = new \ReflectionMethod($instance, $method);
         $params = $reflector->getParameters();
-        $dependencies = $this->resolveParameters($params);
+        $dependencies = $this->resolveParameters($params, $manual);
 
         return $reflector->invokeArgs($instance, $dependencies);
     }
