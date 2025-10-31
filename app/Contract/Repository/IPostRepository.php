@@ -9,4 +9,6 @@ use App\Entity\Post;
  */
 interface IPostRepository extends IBaseRepository
 {
+    /** @return array<Post> */
+    public function findByTitle(string $title): array;
 }

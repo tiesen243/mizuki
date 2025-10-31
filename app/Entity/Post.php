@@ -17,34 +17,14 @@ class Post
     public string $content;
 
     #[Field(name: 'created_at', type: 'DATETIME', nullable: false)]
-    public \DateTime|string $createdAt;
+    public string $createdAt;
 
     #[Field(name: 'updated_at', type: 'DATETIME', nullable: false)]
-    public \DateTime|string $updatedAt;
-
+    public string $updatedAt;
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
-        $this->updatedAt = new \DateTime();
-    }
-
-    public function toArray(): array
-    {
-        if (!($this->createdAt instanceof \DateTime)) {
-            $this->createdAt = new \DateTime($this->createdAt);
-        }
-
-        if (!($this->updatedAt instanceof \DateTime)) {
-            $this->updatedAt = new \DateTime($this->updatedAt);
-        }
-
-        return [
-          'id' => $this->id,
-          'title' => $this->title,
-          'content' => $this->content,
-          'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
-          'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
-        ];
+        $this->createdAt = new \DateTime()->format('Y-m-d H:i:s');
+        $this->updatedAt = new \DateTime()->format('Y-m-d H:i:s');
     }
 }

@@ -17,10 +17,9 @@ abstract class BaseRepository implements IBaseRepository
     protected \PDO $db;
     /** @var TEntity */
     protected object $entity;
-
-    private ?string $tableName = null;
-    private ?string $primaryKey = null;
-    private ?array $columns = null;
+    protected ?string $tableName = null;
+    protected ?string $primaryKey = null;
+    protected ?array $columns = null;
 
     public function __construct(object $entity)
     {
@@ -56,11 +55,7 @@ abstract class BaseRepository implements IBaseRepository
 
         $values = [];
         foreach ($this->columns as $col) {
-            $value = $entity->{$col['prop']};
-            if ($value instanceof \DateTime) {
-                $value = $value->format('Y-m-d H:i:s');
-            }
-            $values[":{$col['name']}"] = $value;
+            $values[":{$col['name']}"] = $entity->{$col['prop']};
         }
 
         if (empty($primaryKeyValue)) {
@@ -125,7 +120,7 @@ abstract class BaseRepository implements IBaseRepository
         $this->columns = $meta['columns'];
     }
 
-    private function getSelectColumns(): string
+    protected function getSelectColumns(): string
     {
         return implode(', ', array_map(fn ($col) => "{$col['name']} AS {$col['prop']}", $this->columns));
     }

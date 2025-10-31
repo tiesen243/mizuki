@@ -21,7 +21,14 @@ class PostController extends Controller
     public function all(IPostRepository $postRepo): Response
     {
         $posts = $postRepo->all();
-        return $this->json(['message' => 'Posts retrieved successfully', 'posts' => array_map(fn ($post) => $post->toArray(), $posts)]);
+        return $this->json(['message' => 'Posts retrieved successfully', 'posts' => $posts]);
+    }
+
+    public function byTitle(IPostRepository $postRepo): Response
+    {
+        $title = $this->request->getQuery('title', '');
+        $posts = $postRepo->findByTitle($title);
+        return $this->json(['message' => 'Posts retrieved by name successfully', 'posts' => $posts]);
     }
 
     public function show(string $id, IPostRepository $postRepo): Response
@@ -45,7 +52,7 @@ class PostController extends Controller
         if (!$post) {
             return $this->json(['message' => 'Post not found'], 404);
         } else {
-            return $this->json(['message' => 'Post found', 'post' => $post->toArray()]);
+            return $this->json(['message' => 'Post found', 'post' => $post]);
         }
     }
 
