@@ -13,7 +13,7 @@ services:
       - db
 
   db:
-    image: mysql:9.4
+    image: mysql:9.5.0
     restart: unless-stopped
     env_file: .env
     ports:
