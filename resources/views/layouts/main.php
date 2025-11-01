@@ -27,15 +27,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap" rel="stylesheet">
 
     <!-- vite -->
-    <?php echo vite_entry_client(); ?>
-    <?php echo vite_entry_script('main'); ?>
-    <?php echo vite_entry_link('main'); ?>
+    <?= vite_entry_client(); ?>
+    <?= vite_entry_script('main'); ?>
+    <?= vite_entry_link('main'); ?>
   </head>
 
   <body class="flex flex-col min-h-dvh antialiased font-sans">
     <header class="bg-background/70 h-14 flex items-center border-b sticky backdrop-blur-2xl backdrop-saturate-150 inset-0">
       <div class="container flex items-center justify-between gap-4">
-        <a href="/" class="text-lg font-bold"><?php echo getConfig()['app']['name']; ?></a>
+        <a href="/" class="text-lg font-bold"><?= getConfig()['app']['name']; ?></a>
         <nav class="flex-1 flex items-center justify-end gap-4 text-sm font-medium [&_a]:hover:underline [&_a]:underline-offset-4">
           <a href="/">Home</a>
           <a href="/posts">Posts</a>
@@ -47,7 +47,7 @@
       </div>
     </header>
 
-    <?php echo $content; ?>
+    <?= $content; ?>
 
     <?php if (isset($flash) && $flash): ?>
       <div id="toast-message" class="fixed backdrop-blur-xl top-4 right-4 border rounded-lg transition-[opacity,translate] ease-linear z-50 px-4 py-3 cursor-pointer shadow-lg flex items-center gap-2 [&_svg]:size-5 <?php
@@ -78,7 +78,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
         <?php endif; ?>
         <p class="text-sm font-medium">
-          <?php echo htmlspecialchars($flash['message'], ENT_QUOTES, 'UTF-8'); ?>
+          <?= htmlspecialchars($flash['message'], ENT_QUOTES, 'UTF-8'); ?>
         </p>
       </div>
     <?php endif; ?>
