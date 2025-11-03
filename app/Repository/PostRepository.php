@@ -10,5 +10,5 @@ use App\Entity\Post;
  */
 class PostRepository extends BaseRepository implements IPostRepository
 {
-    protected string $entity = Post::class;
+  protected string $entity = Post::class;
 }

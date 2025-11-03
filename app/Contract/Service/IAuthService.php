@@ -6,9 +6,9 @@ use App\Entity\User;
 
 interface IAuthService
 {
-    public function register(User $user): void;
+  public function register(User $user): void;
 
-    public function login(User $user): void;
+  public function login(User $user): void;
 
-    public function logout(): void;
+  public function logout(): void;
 }

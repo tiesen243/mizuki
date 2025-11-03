@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Core\Abstract;
 
 abstract class Entity
 {
-    abstract public function validate(array $fields): array;
+  abstract public function validate(array $fields): array;
 }

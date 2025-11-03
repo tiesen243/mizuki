@@ -22,15 +22,15 @@ $sizes = [
 
 $variantClass = isset($variant) && array_key_exists($variant, $variants) ? $variants[$variant] : $variants['default'];
 $sizeClass = isset($size) && array_key_exists($size, $sizes) ? $sizes[$size] : $sizes['default'];
-$additionalClasses = isset($class) ? " " . htmlspecialchars($class) : "";
-$finalClasses = $baseClasses . " " . $variantClass . " " . $sizeClass . $additionalClasses;
+$additionalClasses = isset($class) ? ' '.htmlspecialchars($class) : '';
+$finalClasses = $baseClasses.' '.$variantClass.' '.$sizeClass.$additionalClasses;
 
 ?>
 
 <button
-  type="<?= isset($type) ? htmlspecialchars($type) : "button" ?>"
-  class="<?= $finalClasses ?>"
-  <?= isset($disabled) && $disabled ? "disabled" : "" ?>
+  type="<?= isset($type) ? htmlspecialchars($type) : 'button'; ?>"
+  class="<?= $finalClasses; ?>"
+  <?= isset($disabled) && $disabled ? 'disabled' : ''; ?>
 >
-  <?= isset($slot) ? $slot : "" ?>
+  <?= isset($slot) ? $slot : ''; ?>
 </button>

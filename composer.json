@@ -8,5 +8,8 @@
       "Core\\": "src/"
     }
   },
-  "require": {}
+  "require-dev": {
+    "php": ">=8.4",
+    "friendsofphp/php-cs-fixer": "^3.89"
+  }
 }

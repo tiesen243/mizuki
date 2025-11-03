@@ -2,7 +2,6 @@
 
 namespace App\Contract\Repository;
 
-use App\Contract\Repository\IBaseRepository;
 use App\Entity\User;
 
 /**
@@ -10,9 +9,8 @@ use App\Entity\User;
  */
 interface IUserRepository extends IBaseRepository
 {
-    /**
-     * @param array{username: string, email: string} $identifier
-     * @return User|null
-     */
-    public function findByIdentifier(array $identifier): ?User;
+  /**
+   * @param array{username: string, email: string} $identifier
+   */
+  public function findByIdentifier(array $identifier): ?User;
 }
