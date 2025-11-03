@@ -17,6 +17,9 @@ class Post extends Entity
     #[Field(name: 'content')]
     public string $content;
 
+    #[Field(name: 'author_id')]
+    public string $authorId;
+
     #[Field(name: 'created_at')]
     public string $createdAt;
 
@@ -29,16 +32,24 @@ class Post extends Entity
         $this->updatedAt = new \DateTime()->format('Y-m-d H:i:s');
     }
 
-    public function validate(): array
+    public function validate(array $fields): array
     {
         $errors = [];
 
-        if (strlen($this->title) < 4 || strlen($this->title) > 255) {
-            $errors['title'] = 'Title must be between 4 and 255 characters long.';
+        if (in_array('title', $fields) || empty($fields)) {
+            if (empty($this->title)) {
+                $errors['title'] = 'Title is required.';
+            } elseif (strlen($this->title) < 3 || strlen($this->title) > 100) {
+                $errors['title'] = 'Title must be between 3 and 100 characters.';
+            }
         }
 
-        if (strlen($this->content) < 10) {
-            $errors['content'] = 'Content must be at least 10 characters long.';
+        if (in_array('content', $fields) || empty($fields)) {
+            if (empty($this->content)) {
+                $errors['content'] = 'Content is required.';
+            } elseif (strlen($this->content) < 10) {
+                $errors['content'] = 'Content must be at least 10 characters.';
+            }
         }
 
         return $errors;

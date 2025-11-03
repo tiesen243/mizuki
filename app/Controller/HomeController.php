@@ -9,6 +9,8 @@ class HomeController extends Controller
 {
     public function index(): Response
     {
-        return $this->render('home/index');
+        return $this->render('home/index', [
+            'title' => 'Home Page'
+        ]);
     }
 }

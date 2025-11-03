@@ -22,13 +22,13 @@ services:
       - mizuki_data:/var/lib/mysql
       - ./migrations:/docker-entrypoint-initdb.d
 
-  # phpmyadmin:
-  #   image: phpmyadmin/phpmyadmin
-  #   restart: unless-stopped
-  #   environment:
-  #     PMA_HOST: db
-  #   ports:
-  #     - "8080:80"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+    ports:
+      - "8080:80"
 
 volumes:
   mizuki_data:

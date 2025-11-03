@@ -1,6 +1,8 @@
 import "../css/main.css";
 
 const toggleThemeButton = document.getElementById("toggle-theme");
+const sunIcon = toggleThemeButton?.querySelector(".lucide-sun-icon");
+const moonIcon = toggleThemeButton?.querySelector(".lucide-moon-icon");
 
 toggleThemeButton?.addEventListener("click", (e) => {
   const restoreAnimation = disableAnimation(
@@ -10,6 +12,15 @@ toggleThemeButton?.addEventListener("click", (e) => {
   );
 
   const isDark = document.documentElement.classList.toggle("dark");
+  if (sunIcon && moonIcon) {
+    if (isDark) {
+      sunIcon.classList.add("hidden");
+      moonIcon.classList.remove("hidden");
+    } else {
+      sunIcon.classList.remove("hidden");
+      moonIcon.classList.add("hidden");
+    }
+  }
   localStorage.setItem("theme", isDark ? "dark" : "light");
 
   restoreAnimation();
@@ -22,6 +33,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedTheme = localStorage.getItem("theme");
   const restoreAnimation = disableAnimation(nonce);
   if (savedTheme === "dark") document.documentElement.classList.add("dark");
+  if (sunIcon && moonIcon) {
+    if (savedTheme === "dark") {
+      sunIcon.classList.add("hidden");
+      moonIcon.classList.remove("hidden");
+    } else {
+      sunIcon.classList.remove("hidden");
+      moonIcon.classList.add("hidden");
+    }
+  }
   restoreAnimation();
 });
 

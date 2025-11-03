@@ -4,5 +4,5 @@ namespace Core\Abstract;
 
 abstract class Entity
 {
-    abstract public function validate(): array;
+    abstract public function validate(array $fields): array;
 }
