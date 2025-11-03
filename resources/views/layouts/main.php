@@ -34,15 +34,21 @@
 
   <body class="flex flex-col min-h-dvh antialiased font-sans">
     <header class="bg-background/70 h-14 flex items-center border-b sticky backdrop-blur-2xl backdrop-saturate-150 inset-0">
-      <div class="container flex items-center justify-between gap-4">
+      <div class="container flex items-center justify-between gap-6">
         <a href="/" class="text-lg font-bold"><?= getConfig()['app']['name']; ?></a>
-        <div>
+        <nav class="flex-1 flex items-center justify-end gap-4">
+          <a href="/" class="hover:underline">Home</a>
+          <a href="/posts" class="hover:underline">Posts</a>
+        </nav>
+
+        <div class="flex items-center gap-2">
           <?php if (isset($_SESSION['user'])): ?>
             <form action="/logout" method="POST" onsubmit="return confirm('Are you sure you want to logout?');">
               <button><?= $_SESSION['user']->username; ?></button>
             </form>
           <?php else: ?>
             <a href="/login" class="btn btn-sm">Login</a>
+            <span>/</span>
             <a href="/register" class="btn btn-sm btn-primary">Register</a>
           <?php endif; ?>
         </div>

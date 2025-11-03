@@ -6,20 +6,9 @@ use App\Entity\User;
 
 interface IAuthService
 {
-    /**
-     * @param array{username: string, password: string, email: string} $data
-     * @return bool
-     */
-    public function register(array $data): bool;
+    public function register(User $user): void;
 
-    /**
-     * @param array{username: string, password: string} $data
-     * @return User|null
-     */
-    public function login(array $data): ?object;
+    public function login(User $user): void;
 
-    /**
-     * @return bool
-     */
-    public function logout(): bool;
+    public function logout(): void;
 }

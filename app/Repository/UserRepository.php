@@ -9,13 +9,16 @@ class UserRepository extends BaseRepository implements IUserRepository
 {
     protected string $entity = User::class;
 
-    public function findByUsername(string $username): ?User
+    public function findByIdentifier(array $identifier): ?User
     {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE username = :username LIMIT 1");
-        $stmt->bindParam(':username', $username);
-        $stmt->execute();
-
-        $data = $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, $this->entity);
-        return $data[0] ?? null;
+        $stmt = $this->db->prepare('SELECT * FROM users
+            WHERE username = :username OR email = :email
+            LIMIT 1');
+        $stmt->execute([
+            ':username' => $identifier['username'],
+            ':email' => $identifier['email'],
+        ]);
+        $data = $stmt->fetchObject($this->entity);
+        return $data ?: null;
     }
 }

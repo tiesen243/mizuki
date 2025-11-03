@@ -10,5 +10,9 @@ use App\Entity\User;
  */
 interface IUserRepository extends IBaseRepository
 {
-    public function findByUsername(string $username): ?User;
+    /**
+     * @param array{username: string, email: string} $identifier
+     * @return User|null
+     */
+    public function findByIdentifier(array $identifier): ?User;
 }

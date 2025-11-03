@@ -36,6 +36,12 @@ class User extends Entity
     {
         $errors = [];
 
+        if (in_array('identifier', $fields) || empty($fields)) {
+            if (empty($this->username) && empty($this->email)) {
+                $errors['identifier'] = 'Username or email is required.';
+            }
+        }
+
         if (in_array('username', $fields) || empty($fields)) {
             if (empty($this->username)) {
                 $errors['username'] = 'Username is required.';

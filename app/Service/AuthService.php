@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Contract\Repository\IUserRepository;
 use App\Contract\Service\IAuthService;
+use App\Entity\User;
 
 class AuthService implements IAuthService
 {
@@ -11,31 +12,42 @@ class AuthService implements IAuthService
     {
     }
 
-    public function register(array $data): bool
+    public function register(User $user): void
     {
-        return true;
+        $existingUser = $this->userRepository->findByIdentifier([
+            'username' => $user->username,
+            'email' => $user->email,
+        ]);
+        if ($existingUser) {
+            throw new \Exception('Username or email already exists.');
+        }
+
+        $user->password = password_hash($user->password, PASSWORD_BCRYPT);
+        $this->userRepository->store($user);
     }
 
-    public function login(array $data): ?object
+    public function login(User $user): void
     {
-        $user = $this->userRepository->findByUsername($data['username']);
-        if (!$user) {
+        $existingUser = $this->userRepository->findByIdentifier([
+            'username' => $user->username,
+            'email' => $user->username,
+        ]);
+        if (!$existingUser) {
             throw new \Exception('Invalid credentials.');
         }
 
-        if ($data['password'] !== $user->password && !password_verify($data['password'], $user->password)) {
+        if ($user->password !== $existingUser->password &&
+          !password_verify($user->password, $existingUser->password)) {
             throw new \Exception('Invalid credentials.');
         }
 
-        $_SESSION['user'] = $user;
-        return $user;
+        $_SESSION['user'] = $existingUser;
     }
 
 
 
-    public function logout(): bool
+    public function logout(): void
     {
         unset($_SESSION['user']);
-        return true;
     }
 }

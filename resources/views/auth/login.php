@@ -3,19 +3,19 @@
 
   <form class="max-w-md mx-auto" method="post">
     <fieldset class="flex flex-col gap-6">
-      <legend class="mb-4 font-medium">Login</legend>
+      <legend class="mb-4 font-medium">Login to Your Account</legend>
       <p class="text-muted-foreground text-sm leading-normal font-normal group-has-[[data-orientation=horizontal]]/field:text-balance">
-        Fill in your credentials to access your account.
+        Welcome back! Please enter your credentials to access your account.
       </p>
 
       <div class="group/field-group @container/field-group flex w-full flex-col gap-7 data-[slot=checkbox-group]:gap-3 [&>[data-slot=field-group]]:gap-4">
         <?php
-        $id = "username";
-        $label = "Username";
-        $name = "username";
-        $value = isset($old['username']) ? htmlspecialchars($old['username'], ENT_QUOTES, 'UTF-8') : '';
-        $placeholder = "Enter your username";
-        $error = isset($errors['username']) ? $errors['username'] : null;
+        $id = "identifier";
+        $label = "Username or Email";
+        $name = "identifier";
+        $value = isset($old['identifier']) ? htmlspecialchars($old['identifier'], ENT_QUOTES, 'UTF-8') : '';
+        $placeholder = "Enter your username or email";
+        $error = isset($errors['identifier']) ? $errors['identifier'] : null;
         include __DIR__ . '/../components/ui/field.php';
         ?>
 
