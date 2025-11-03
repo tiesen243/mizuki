@@ -2,14 +2,14 @@
 
 namespace App\Controller;
 
-use App\Contract\Service\IAuthService;
+use App\Contract\Repository\IUserRepository;
 use App\Entity\User;
 use Core\Abstract\Controller;
 use Core\Http\Response;
 
 class AuthController extends Controller
 {
-  public function register(IAuthService $authService): Response {
+  public function register(IUserRepository $userRepo): Response {
     if ('GET' === $this->request->method()) {
       return $this->render('app/auth/register', [
         'title' => 'Register',
@@ -33,7 +33,15 @@ class AuthController extends Controller
 
     $this->db->beginTransaction();
     try {
-      $authService->register($user);
+      $existingUser = $userRepo->findByIdentifier([
+        'username' => $user->username,
+        'email' => $user->email,
+      ]);
+      if ($existingUser) {
+        throw new \Exception('Username or email already exists.');
+      }
+      $user->password = password_hash($user->password, PASSWORD_BCRYPT);
+      $userRepo->store($user);
       $this->db->commit();
       $this->setFlash('success', 'Registration successful. Please log in.');
 
@@ -48,7 +56,7 @@ class AuthController extends Controller
     }
   }
 
-  public function login(IAuthService $authService): Response {
+  public function login(IUserRepository $userRepo): Response {
     if ('GET' === $this->request->method()) {
       return $this->render('app/auth/login', ['title' => 'Login']);
     }
@@ -65,15 +73,25 @@ class AuthController extends Controller
       ]);
     }
 
-    $this->db->beginTransaction();
     try {
-      $authService->login($user);
-      $this->db->commit();
+      $existingUser = $userRepo->findByIdentifier([
+        'username' => $user->username,
+        'email' => $user->username,
+      ]);
+      if (!$existingUser) {
+        throw new \Exception('Invalid credentials.');
+      }
+
+      if ($user->password !== $existingUser->password
+        && !password_verify($user->password, $existingUser->password)) {
+        throw new \Exception('Invalid credentials.');
+      }
+
+      $_SESSION['user'] = $existingUser;
       $this->setFlash('success', 'Login successful.');
 
       return $this->redirect('/');
     } catch (\Exception $e) {
-      $this->db->rollBack();
       $this->setFlash('error', $e->getMessage());
 
       return $this->redirect('/login', [
@@ -84,7 +102,7 @@ class AuthController extends Controller
     return $this->redirect('/login');
   }
 
-  public function logout(IAuthService $authService): Response {
+  public function logout(): Response {
     if ('POST' !== $this->request->method()) {
       $this->setFlash('error', 'Invalid request method for logout.');
 
@@ -97,7 +115,7 @@ class AuthController extends Controller
       return $this->redirect('/login');
     }
 
-    $authService->logout();
+    unset($_SESSION['user']);
 
     return $this->redirect('/login');
   }

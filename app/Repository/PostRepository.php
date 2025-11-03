@@ -17,7 +17,8 @@ class PostRepository extends BaseRepository implements IPostRepository
 
     $stmt = $this->db->prepare("SELECT {$columns}, u.id AS author_id, u.username AS author_name
       FROM posts p
-      JOIN users u ON p.author_id = u.id");
+      JOIN users u ON p.author_id = u.id
+      ORDER BY p.created_at DESC");
     $stmt->execute();
     $posts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 

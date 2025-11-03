@@ -10,7 +10,6 @@ require_once $basePath.'/src/helpers.php';
 session_start();
 $application = new Core\Application($basePath);
 $application->register(function (Core\Kernel\Container $container) {
-  //  Bind Repositories
   $container->bind(
     App\Contract\Repository\IPostRepository::class,
     App\Repository\PostRepository::class
@@ -18,11 +17,5 @@ $application->register(function (Core\Kernel\Container $container) {
   $container->bind(
     App\Contract\Repository\IUserRepository::class,
     App\Repository\UserRepository::class
-  );
-
-  // Bind Services
-  $container->bind(
-    App\Contract\Service\IAuthService::class,
-    App\Service\AuthService::class
   );
 })->run();
