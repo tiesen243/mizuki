@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Abstract;
 
+use App\Entity\User;
 use Core\Http\{Request, Response};
 use Core\Kernel\Database;
 
@@ -71,6 +72,10 @@ abstract class Controller
   }
 
   protected function isAuthenticated(): bool {
-    return isset($_SESSION['user_id']);
+    return isset($_SESSION['user']);
+  }
+
+  protected function getUser(): ?User {
+    return $_SESSION['user'] ?? null;
   }
 }

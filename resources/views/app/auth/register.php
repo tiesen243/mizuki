@@ -1,7 +1,7 @@
-<main class="container py-4">
+<main class="container py-4 min-h-[calc(100dvh-3.5rem)] flex items-center justify-center">
   <h1 class="sr-only">Register Page</h1>
 
-  <form class="max-w-md mx-auto" method="post">
+  <form class="max-w-md" method="post">
     <fieldset class="flex flex-col gap-6">
       <legend class="mb-4 font-medium">Register to Your Account</legend>
       <p class="text-muted-foreground text-sm leading-normal font-normal group-has-[[data-orientation=horizontal]]/field:text-balance">
@@ -13,11 +13,10 @@
         $id = 'username';
         $label = 'Username';
         $name = 'username';
-        $type = 'text';
         $value = isset($old['username']) ? htmlspecialchars($old['username'], ENT_QUOTES, 'UTF-8') : '';
         $placeholder = 'Enter your username';
         $error = isset($errors['username']) ? $errors['username'] : null;
-        include __DIR__.'/../components/ui/field.php';
+        include __DIR__.'/../../components/ui/field.php';
         ?>
 
         <?php
@@ -28,7 +27,7 @@
         $value = isset($old['email']) ? htmlspecialchars($old['email'], ENT_QUOTES, 'UTF-8') : '';
         $placeholder = 'Enter your email';
         $error = isset($errors['email']) ? $errors['email'] : null;
-        include __DIR__.'/../components/ui/field.php';
+        include __DIR__.'/../../components/ui/field.php';
         ?>
 
         <?php
@@ -36,10 +35,9 @@
         $label = 'Password';
         $name = 'password';
         $type = 'password';
-        $value = '';
         $placeholder = 'Enter your password';
         $error = isset($errors['password']) ? $errors['password'] : null;
-        include __DIR__.'/../components/ui/field.php';
+        include __DIR__.'/../../components/ui/field.php';
         ?>
 
 
@@ -48,10 +46,9 @@
         $label = 'Confirm Password';
         $name = 'confirm_password';
         $type = 'password';
-        $value = '';
         $placeholder = 'Confirm your password';
         $error = isset($errors['confirm_password']) ? $errors['confirm_password'] : null;
-        include __DIR__.'/../components/ui/field.php';
+        include __DIR__.'/../../components/ui/field.php';
         ?>
       </div>
 
@@ -59,7 +56,7 @@
         <?php
         $type = 'submit';
         $slot = 'Register';
-        include __DIR__.'/../components/ui/button.php';
+        include __DIR__.'/../../components/ui/button.php';
         ?>
       </div>
     </fieldset>

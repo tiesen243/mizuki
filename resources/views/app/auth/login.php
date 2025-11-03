@@ -1,7 +1,7 @@
-<main class="container py-4">
+<main class="container py-4 min-h-[calc(100dvh-3.5rem)] flex items-center justify-center">
   <h1 class="sr-only">Login Page</h1>
 
-  <form class="max-w-md mx-auto" method="post">
+  <form class="max-w-md" method="post">
     <fieldset class="flex flex-col gap-6">
       <legend class="mb-4 font-medium">Login to Your Account</legend>
       <p class="text-muted-foreground text-sm leading-normal font-normal group-has-[[data-orientation=horizontal]]/field:text-balance">
@@ -24,7 +24,6 @@
         $label = 'Password';
         $name = 'password';
         $type = 'password';
-        $value = '';
         $placeholder = 'Enter your password';
         $error = isset($errors['password']) ? $errors['password'] : null;
         include __DIR__.'/../../components/ui/field.php';
