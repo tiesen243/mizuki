@@ -37,4 +37,33 @@ class PostRepository extends BaseRepository implements IPostRepository
       return $postEntity;
     }, $posts);
   }
+
+  public function findWithAuthor(string $id): ?Post {
+    $columns = implode(', ', array_map(fn ($col) => "p.{$col['name']} AS {$col['property']}", $this->getColumns()));
+
+    $stmt = $this->db->prepare("SELECT {$columns}, u.id AS author_id, u.username AS author_name
+      FROM posts p
+      JOIN users u ON p.author_id = u.id
+      WHERE p.id = :id");
+    $stmt->bindValue(':id', $id);
+    $stmt->execute();
+    $post = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+    if (!$post) {
+      return null;
+    }
+
+    $postEntity = new Post();
+    $postEntity->id = $post['id'];
+    $postEntity->title = $post['title'];
+    $postEntity->content = $post['content'];
+    $postEntity->createdAt = $post['createdAt'];
+    $postEntity->updatedAt = $post['updatedAt'];
+    $postEntity->author = [
+      'id' => $post['author_id'],
+      'username' => $post['author_name'],
+    ];
+
+    return $postEntity;
+  }
 }

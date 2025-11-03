@@ -2,12 +2,13 @@
 
 namespace App\Controller;
 
-use App\Contract\Repository\{IPostRepository, IUserRepository};
+use App\Contract\Controller\IPostController;
+use App\Contract\Repository\IPostRepository;
 use App\Entity\Post;
 use Core\Abstract\Controller;
 use Core\Http\Response;
 
-class PostController extends Controller
+class PostController extends Controller implements IPostController
 {
   public function index(IPostRepository $postRepo): Response {
     $posts = $postRepo->allWithAuthor();
@@ -18,8 +19,8 @@ class PostController extends Controller
     ]);
   }
 
-  public function show(string $id, IPostRepository $postRepo, IUserRepository $userRepo): Response {
-    $post = $postRepo->find($id);
+  public function show(string $id, IPostRepository $postRepo): Response {
+    $post = $postRepo->findWithAuthor($id);
 
     if (!$post) {
       $this->setFlash('error', 'Post not found.');
@@ -27,12 +28,9 @@ class PostController extends Controller
       return $this->redirect('/posts');
     }
 
-    $author = $userRepo->find($post->authorId);
-
     return $this->render('app/post/show', [
       'title' => $post->title,
       'post' => $post,
-      'author' => $author,
     ]);
   }
 
@@ -64,6 +62,50 @@ class PostController extends Controller
 
     $postRepo->store($post);
     $this->setFlash('success', 'Post created successfully.');
+
+    return $this->redirect('/posts');
+  }
+
+  public function edit(string $id, IPostRepository $postRepo): Response {
+    if (!$this->isAuthenticated()) {
+      $this->setFlash('error', 'You must be logged in to edit a post.');
+
+      return $this->redirect('/login');
+    }
+
+    $post = $postRepo->find($id);
+    if (!$post) {
+      $this->setFlash('error', 'Post not found.');
+
+      return $this->redirect('/posts');
+    }
+
+    if ($post->authorId !== $this->getUser()->id) {
+      $this->setFlash('error', 'You are not authorized to edit this post.');
+
+      return $this->redirect('/posts');
+    }
+
+    if ('GET' === $this->request->method()) {
+      return $this->render('app/post/edit', [
+        'title' => 'Edit Post',
+        'post' => $post,
+      ]);
+    }
+
+    $post->title = $this->request->getPost('title', '');
+    $post->content = $this->request->getPost('content', '');
+    $errors = $post->validate(['title', 'content']);
+    if (!empty($errors)) {
+      return $this->render('app/post/edit', [
+        'title' => 'Edit Post',
+        'errors' => $errors,
+        'post' => $post,
+      ]);
+    }
+
+    $postRepo->store($post);
+    $this->setFlash('success', 'Post updated successfully.');
 
     return $this->redirect('/posts');
   }
