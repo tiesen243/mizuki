@@ -24,13 +24,19 @@ $variantClass = isset($variant) && array_key_exists($variant, $variants) ? $vari
 $sizeClass = isset($size) && array_key_exists($size, $sizes) ? $sizes[$size] : $sizes['default'];
 $additionalClasses = isset($class) ? ' '.htmlspecialchars($class) : '';
 $finalClasses = $baseClasses.' '.$variantClass.' '.$sizeClass.$additionalClasses;
+$comp = isset($as) ? $as : 'button';
 
 ?>
 
-<button
+<?= "<{$comp}"; ?>
   type="<?= isset($type) ? htmlspecialchars($type) : 'button'; ?>"
   class="<?= $finalClasses; ?>"
   <?= isset($disabled) && $disabled ? 'disabled' : ''; ?>
+  <?php if (isset($attributes) && is_array($attributes)) {
+    foreach ($attributes as $attrName => $attrValue) {
+      echo htmlspecialchars($attrName).'="'.htmlspecialchars($attrValue).'" ';
+    }
+  } ?>
 >
   <?= isset($slot) ? $slot : ''; ?>
-</button>
+</<?= $comp; ?>>

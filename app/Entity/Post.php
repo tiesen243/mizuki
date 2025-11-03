@@ -26,6 +26,11 @@ class Post extends Entity
   #[Field(name: 'updated_at')]
   public string $updatedAt;
 
+  public array $author = [
+    'id' => '',
+    'username' => '',
+  ];
+
   public function __construct() {
     $this->createdAt = new \DateTime()->format('Y-m-d H:i:s');
     $this->updatedAt = new \DateTime()->format('Y-m-d H:i:s');

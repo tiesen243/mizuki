@@ -16,7 +16,7 @@
         $value = isset($old['identifier']) ? htmlspecialchars($old['identifier'], ENT_QUOTES, 'UTF-8') : '';
         $placeholder = 'Enter your username or email';
         $error = isset($errors['identifier']) ? $errors['identifier'] : null;
-        include __DIR__.'/../components/ui/field.php';
+        include __DIR__.'/../../components/ui/field.php';
         ?>
 
         <?php
@@ -27,7 +27,7 @@
         $value = '';
         $placeholder = 'Enter your password';
         $error = isset($errors['password']) ? $errors['password'] : null;
-        include __DIR__.'/../components/ui/field.php';
+        include __DIR__.'/../../components/ui/field.php';
         ?>
       </div>
 
@@ -35,7 +35,7 @@
         <?php
         $type = 'submit';
         $slot = 'Login';
-        include __DIR__.'/../components/ui/button.php';
+        include __DIR__.'/../../components/ui/button.php';
         ?>
       </div>
     </fieldset>

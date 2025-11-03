@@ -50,7 +50,7 @@ class AuthController extends Controller
 
   public function login(IAuthService $authService): Response {
     if ('GET' === $this->request->method()) {
-      return $this->render('auth/login', ['title' => 'Login']);
+      return $this->render('app/auth/login', ['title' => 'Login']);
     }
 
     $user = new User();

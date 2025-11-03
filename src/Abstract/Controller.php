@@ -69,4 +69,8 @@ abstract class Controller
       'message' => $message,
     ];
   }
+
+  protected function isAuthenticated(): bool {
+    return isset($_SESSION['user_id']);
+  }
 }
