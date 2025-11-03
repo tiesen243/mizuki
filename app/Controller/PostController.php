@@ -2,13 +2,12 @@
 
 namespace App\Controller;
 
-use App\Contract\Controller\IPostController;
 use App\Contract\Repository\IPostRepository;
 use App\Entity\Post;
 use Core\Abstract\Controller;
 use Core\Http\Response;
 
-class PostController extends Controller implements IPostController
+class PostController extends Controller
 {
   public function index(IPostRepository $postRepo): Response {
     $posts = $postRepo->allWithAuthor();

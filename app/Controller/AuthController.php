@@ -2,13 +2,12 @@
 
 namespace App\Controller;
 
-use App\Contract\Controller\IAuthController;
 use App\Contract\Repository\IUserRepository;
 use App\Entity\User;
 use Core\Abstract\Controller;
 use Core\Http\Response;
 
-class AuthController extends Controller implements IAuthController
+class AuthController extends Controller
 {
   public function register(IUserRepository $userRepo): Response {
     if ('GET' === $this->request->method()) {
