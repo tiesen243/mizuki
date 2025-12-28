@@ -94,6 +94,7 @@ class PostController extends Controller
 
     $post->title = $this->request->getPost('title', '');
     $post->content = $this->request->getPost('content', '');
+    $post->updatedAt = new \DateTime()->format('Y-m-d H:i:s');
     $errors = $post->validate(['title', 'content']);
     if (!empty($errors)) {
       return $this->render('post/edit', [
@@ -106,7 +107,7 @@ class PostController extends Controller
     $postRepo->store($post);
     $this->setFlash('success', 'Post updated successfully.');
 
-    return $this->redirect('/posts');
+    return $this->redirect('/posts/'.$post->id);
   }
 
   public function delete(string $id, IPostRepository $postRepo): Response {

@@ -50,13 +50,12 @@ abstract class BaseRepository implements IBaseRepository
       $entity->{$this->primaryKey} = createId();
       $stmt = $this->db->prepare(
         "INSERT INTO {$this->tableName} (".implode(', ', $columns).')
-                 VALUES (:'.implode(', :', $columns).')'
+          VALUES (:'.implode(', :', $columns).')'
       );
     } else {
-      $setClause = implode(', ', array_map(fn ($col) => "{$col} = :{$col}", $columns));
       $stmt = $this->db->prepare(
-        "UPDATE {$this->tableName} SET {$setClause}
-                 WHERE {$this->primaryKey} = :{$this->primaryKey}"
+        "UPDATE {$this->tableName} SET ".implode(', ', array_map(fn ($col) => "{$col} = :{$col}", array_filter($columns, fn ($col) => $col !== $this->primaryKey)))."
+          WHERE {$this->primaryKey} = :{$this->primaryKey}"
       );
       $stmt->bindValue($this->primaryKey, $entity->{$this->primaryKey});
     }
