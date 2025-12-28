@@ -11,7 +11,7 @@ WORKDIR /deps
 COPY composer.json ./
 RUN composer install --no-dev --optimize-autoloader
 
-FROM oven/bun:latest AS builder
+FROM oven/bun:alpine AS builder
 WORKDIR /build
 
 COPY package.json bun.lock ./

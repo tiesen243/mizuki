@@ -11,7 +11,7 @@ class AuthController extends Controller
 {
   public function register(IUserRepository $userRepo): Response {
     if ('GET' === $this->request->method()) {
-      return $this->render('app/auth/register', [
+      return $this->render('auth/register', [
         'title' => 'Register',
       ]);
     }
@@ -27,7 +27,7 @@ class AuthController extends Controller
     if (!empty($errors)) {
       return $this->redirect('/register', [
         'errors' => $errors,
-        'old' => ['username' => $user->username, 'email' => $user->email],
+        'old' => ['username' => $user->username, 'email' => $user->email, 'password' => $user->password],
       ]);
     }
 
@@ -58,7 +58,7 @@ class AuthController extends Controller
 
   public function login(IUserRepository $userRepo): Response {
     if ('GET' === $this->request->method()) {
-      return $this->render('app/auth/login', ['title' => 'Login']);
+      return $this->render('auth/login', ['title' => 'Login']);
     }
 
     $user = new User();

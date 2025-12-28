@@ -2,15 +2,17 @@
 if (isset($__data) && is_array($__data)) {
   extract($__data, EXTR_SKIP);
 }
+
+$type ??= 'text';
 ?>
 
 <div
   data-invalid="<?= isset($error) && $error ? 'true' : 'false'; ?>"
-  class="group/field flex w-full gap-3 data-[invalid=true]:text-destructive flex-col [&>*]:w-full [&>.sr-only]:w-auto <?= isset($containerClass) ? htmlspecialchars($containerClass) : ''; ?>"
+  class="data-[invalid=true]:text-destructive gap-2 group/field flex w-full flex-col [&>*]:w-full [&>.sr-only]:w-auto <?= isset($containerClass) ? htmlspecialchars($containerClass) : ''; ?>"
 >
   <label
     for="<?= isset($id) ? htmlspecialchars($id) : ''; ?>"
-    class="group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 <?= isset($labelClass) ? htmlspecialchars($labelClass) : ''; ?>"
+    class="has-data-checked:bg-primary/5 has-data-checked:border-primary dark:has-data-checked:bg-primary/10 gap-2 group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:rounded-lg has-[>[data-slot=field]]:border [&>*]:data-[slot=field]:p-2.5 group/field-label peer/field-label flex w-fit leading-snug has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col <?= isset($labelClass) ? htmlspecialchars($labelClass) : ''; ?>"
   >
     <?= isset($label) ? htmlspecialchars($label) : ''; ?>
   </label>
@@ -21,7 +23,7 @@ if (isset($__data) && is_array($__data)) {
       name="<?= isset($name) ? htmlspecialchars($name) : ''; ?>"
       placeholder="<?= isset($placeholder) ? htmlspecialchars($placeholder) : ''; ?>"
       aria-invalid="<?= isset($error) && $error ? 'true' : 'false'; ?>"
-      class="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+      class="border-input dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 rounded-lg border bg-transparent px-2.5 py-2 text-base transition-colors focus-visible:ring-[3px] aria-invalid:ring-[3px] md:text-sm placeholder:text-muted-foreground flex field-sizing-content min-h-16 w-full outline-none disabled:cursor-not-allowed disabled:opacity-50 <?= isset($inputClass) ? htmlspecialchars($inputClass) : ''; ?>"
       <?= isset($required) && $required ? 'required' : ''; ?>
     ><?= isset($value) ? htmlspecialchars($value) : ''; ?></textarea>
   <?php } else { ?>
@@ -32,7 +34,7 @@ if (isset($__data) && is_array($__data)) {
       value="<?= isset($value) ? htmlspecialchars($value) : ''; ?>"
       placeholder="<?= isset($placeholder) ? htmlspecialchars($placeholder) : ''; ?>"
       aria-invalid="<?= isset($error) && $error ? 'true' : 'false'; ?>"
-      class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive <?= isset($inputClass) ? htmlspecialchars($inputClass) : ''; ?>"
+      class="dark:bg-input/30 border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 h-8 rounded-lg border bg-transparent px-2.5 py-1 text-base transition-colors file:h-6 file:text-sm file:font-medium focus-visible:ring-[3px] aria-invalid:ring-[3px] md:text-sm file:text-foreground placeholder:text-muted-foreground w-full min-w-0 outline-none file:inline-flex file:border-0 file:bg-transparent disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 <?= isset($inputClass) ? htmlspecialchars($inputClass) : ''; ?>"
       <?= isset($required) && $required ? 'required' : ''; ?>
     />
   <?php } ?>
@@ -43,5 +45,5 @@ if (isset($__data) && is_array($__data)) {
 </div>
 
 <?php
-unset($id, $label, $name, $type, $value, $placeholder, $error, $containerClass, $labelClass, $inputClass);
+unset($type, $containerClass, $labelClass, $inputClass, $id, $name, $placeholder, $value, $error, $label, $required);
 ?>

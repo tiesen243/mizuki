@@ -22,10 +22,14 @@ abstract class Controller
       unset($_SESSION['redirect_data']);
     }
 
+    if (!file_exists($this->basePath.'/resources/views/app/'.$view.'.php')) {
+      return new Response('View not found: '.$view, 400);
+    }
+
     ob_start();
     extract($data);
     $flash = $this->getFlash();
-    require $this->basePath.'/resources/views/'.$view.'.php';
+    require $this->basePath.'/resources/views/app/'.$view.'.php';
     $content = ob_get_clean();
 
     ob_start();

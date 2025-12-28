@@ -12,7 +12,7 @@ class PostController extends Controller
   public function index(IPostRepository $postRepo): Response {
     $posts = $postRepo->allWithAuthor();
 
-    return $this->render('app/post/index', [
+    return $this->render('post/index', [
       'title' => 'Posts',
       'posts' => $posts,
     ]);
@@ -27,7 +27,7 @@ class PostController extends Controller
       return $this->redirect('/posts');
     }
 
-    return $this->render('app/post/show', [
+    return $this->render('post/show', [
       'title' => $post->title,
       'post' => $post,
     ]);
@@ -41,7 +41,7 @@ class PostController extends Controller
     }
 
     if ('GET' === $this->request->method()) {
-      return $this->render('app/post/create', [
+      return $this->render('post/create', [
         'title' => 'Create Post',
       ]);
     }
@@ -52,7 +52,7 @@ class PostController extends Controller
     $post->authorId = $this->getUser()->id;
     $errors = $post->validate(['title', 'content']);
     if (!empty($errors)) {
-      return $this->render('app/post/create', [
+      return $this->render('post/create', [
         'title' => 'Create Post',
         'errors' => $errors,
         'old' => ['title' => $post->title, 'content' => $post->content],
@@ -86,7 +86,7 @@ class PostController extends Controller
     }
 
     if ('GET' === $this->request->method()) {
-      return $this->render('app/post/edit', [
+      return $this->render('post/edit', [
         'title' => 'Edit Post',
         'post' => $post,
       ]);
@@ -96,7 +96,7 @@ class PostController extends Controller
     $post->content = $this->request->getPost('content', '');
     $errors = $post->validate(['title', 'content']);
     if (!empty($errors)) {
-      return $this->render('app/post/edit', [
+      return $this->render('post/edit', [
         'title' => 'Edit Post',
         'errors' => $errors,
         'post' => $post,

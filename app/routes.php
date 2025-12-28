@@ -3,6 +3,7 @@
 use Core\Kernel\Router;
 
 Router::get('/', [App\Controller\HomeController::class, 'index']);
+Router::get('/about', [App\Controller\HomeController::class, 'about']);
 
 Router::get('/register', [App\Controller\AuthController::class, 'register']);
 Router::post('/register', [App\Controller\AuthController::class, 'register']);
