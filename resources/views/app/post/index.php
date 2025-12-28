@@ -2,11 +2,12 @@
   <div class="flex items-center justify-between mb-6">
     <h1 class="text-3xl font-semibold">All Posts</h1>
 
-    <?php $slot = 'Create Post';
-    $as = 'a';
-    $attributes = ['href' => '/posts/create'];
-    include __DIR__.'/../../components/ui/button.php';
-    ?>
+    <?php if ($this->isAuthenticated()) {
+      $slot = 'Create Post';
+      $as = 'a';
+      $attributes = ['href' => '/posts/create'];
+      include __DIR__.'/../../components/ui/button.php';
+    } ?>
   </div>
 
   <ul class="grid gap-4 mb-6 md:grid-cols-2 lg:grid-cols-3">
